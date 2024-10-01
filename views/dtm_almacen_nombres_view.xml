@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+       <data>
+            <record id = "dtm_almacen_nombres" model="ir.ui.view">
+               <field name="name">dtm_almacen_nombres_search</field>
+               <field name="model">dtm.almacen.nombres</field>
+               <field name ="arch" type="xml">
+                   <search>
+                        <field name="nombre"></field>
+                        <separator/>
+                        <filter string="Lámina" name="diseno_lamina" domain="[('nombre','ilike','Lámina')]"/>
+                        <filter string="Perfiles" name="diseno_perfiles" domain="[('nombre','ilike','Perfil')]"/>
+                        <filter string="Tubos" name="diseno_tubos" domain="[('nombre','ilike','Tubo')]"/>
+                        <filter string="Ángulos" name="diseno_angulos" domain="[('nombre','ilike','Ángulo')]"/>
+                        <filter string="Solera" name="diseno_solera" domain="[('nombre','ilike','Solera')]"/>
+                        <filter string="Varilla" name="diseno_varilla" domain="[('nombre','ilike','Varilla')]"/>
+                        <filter string="Canal" name="diseno_canal" domain="[('nombre','ilike','Canal')]"/>
+                        <filter string="Tornillería" name="diseno_tornillería" domain="[('nombre','ilike','Torni')]"/>
+                        <filter string="Rodamientos" name="diseno_rodamientos" domain="[('nombre','ilike','Rodamientos')]"/>
+                        <filter string="Pintura" name="diseno_pintura" domain="[('nombre','ilike','Pintura')]"/>
+                        <separator/>
+                        <filter string="Ácero al carbón" name="diseno_carbon" domain="[('nombre','ilike','carbón')]"/>
+                        <filter string="Inoxidable" name="diseno_inox" domain="[('nombre','ilike','inoxidable')]"/>
+                        <filter string="Galvanizado" name="diseno_galvanizada" domain="[('nombre','ilike','galvanizado')]"/>
+                        <filter string="Aluminio" name="diseno_alumino" domain="[('nombre','ilike','aluminio')]"/>
+                   </search>
+
+
+               </field>
+            </record>
+       </data>
+</odoo>

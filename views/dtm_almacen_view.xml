@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+       <data>
+            <record id="dtm_almacen_tree" model="ir.ui.view">
+                <field name="name">dtm_almacen_tree</field>
+                <field name="model">dtm.almacen</field>
+                <field name="arch" type="xml">
+                    <tree delete="false">
+                        <field name="inventario_id"></field>
+                    </tree>
+                </field>
+            </record>
+
+            <record id="dtm_almacen_accion" model="ir.actions.act_window">
+                <field name="name">Almacén</field>
+                <field name="res_model">dtm.almacen</field>
+                <field name="view_mode">tree,form</field>
+            </record>
+
+           <record id = "dtm_almace_search" model="ir.ui.view">
+               <field name="name">dtm.almacen.search</field>
+               <field name="model">dtm.almacen</field>
+               <field name ="arch" type="xml">
+                   <search>
+<!--                        <field name="id"></field>                     -->
+<!--                        <separator/>-->
+<!--                        <filter string="Lámina completa" name="lamina_completa" domain="['|', '|', '|', ('medida', 'ilike', '120.0 x 48.0 @'), ('medida', 'ilike', '120.0 x 36.0 @'), ('medida', 'ilike', '96.0 x 48.0 @'), ('medida', 'ilike', '96.0 x 36.0 @')]" />-->
+                   </search>
+
+
+               </field>
+           </record>
+
+            <record id="dtm_almacen_form" model="ir.ui.view">
+                <field name="name">dtm_almacen_form</field>
+                <field name="model">dtm.almacen</field>
+                <field name="arch" type="xml">
+                        <form string="">
+                            <sheet>
+                                <group>
+                                    <field name="inventario_id"/>
+                                    <field name="id_inventario"/>
+                                    <field name="cantidad"/>
+                                    <field name="nombre_materiales"/>
+                                    <field name="medidas"/>
+
+<!--   _____________________________Lámina_______________________________________________________________________________________________________________________    -->
+                                    <field name="lamina" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('lamina','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('lamina','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('lamina','!=',True)]}"/>
+<!--   _____________________________Perfil_______________________________________________________________________________________________________________________    -->
+                                    <field name="perfil" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                    <field name="alto" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('perfil','!=',True)]}"/>
+<!--   _____________________________Barras_______________________________________________________________________________________________________________________    -->
+                                    <field name="barras" invisible="1"/>
+                                    <field name="diametros" attrs="{'invisible': [('barras','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('barras','!=',True)]}"/>
+<!--   _____________________________Tubos_______________________________________________________________________________________________________________________    -->
+                                    <field name="tubos" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('tubos','!=',True)]}"/>
+                                    <field name="diametros" attrs="{'invisible': [('tubos','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('tubos','!=',True)]}"/>
+<!--   _____________________________Placa_______________________________________________________________________________________________________________________    -->
+                                    <field name="placa" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('placa','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('placa','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('placa','!=',True)]}"/>
+<!--   _____________________________Solera_______________________________________________________________________________________________________________________    -->
+                                    <field name="solera" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('solera','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('solera','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('solera','!=',True)]}"/>
+<!--   _____________________________Varilla_______________________________________________________________________________________________________________________    -->
+                                    <field name="varilla" invisible="1"/>
+                                    <field name="diametros" attrs="{'invisible': [('varilla','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('varilla','!=',True)]}"/>
+<!--   _____________________________Canal_______________________________________________________________________________________________________________________    -->
+                                    <field name="canal" invisible="1"/>
+                                    <field name="espesor" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                    <field name="alto" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('canal','!=',True)]}"/>
+<!--   _____________________________Ángulos_______________________________________________________________________________________________________________________    -->
+                                    <field name="angulos" invisible="1"/>
+                                    <field name="calibre" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                    <field name="alto" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                    <field name="ancho" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                    <field name="largo" attrs="{'invisible': [('angulos','!=',True)]}"/>
+
+
+                                    <field name="codigo_nuevo" options='{"type": "number"}'/>
+                                    <field name="cantidad_nueva" options='{"type": "number"}'/>
+                                    <button type="object" name="action_cargar_stock" string="Agregar" icon="fa-solid fa-upload" class="btn btn-primary"/>
+                                </group>
+                            </sheet>
+                        </form>
+                </field>
+            </record>
+
+        <menuitem id="dtm_almacen_menu" action="dtm_almacen_accion" />
+       </data>
+
+
+</odoo>
