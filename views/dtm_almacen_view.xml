@@ -38,10 +38,10 @@
                         <form string="">
                             <sheet>
                                 <group>
-                                    <field name="inventario_id"/>
-                                    <field name="id_inventario"/>
+                                    <field name="inventario_id" options="{'no_create': True}"/>
+                                    <field name="id_inventario"  />
                                     <field name="cantidad"/>
-                                    <field name="nombre_materiales"/>
+                                    <field name="nombre_materiales" options="{'no_create': True}"/>
                                     <field name="medidas"/>
 
 <!--   _____________________________Lámina_______________________________________________________________________________________________________________________    -->

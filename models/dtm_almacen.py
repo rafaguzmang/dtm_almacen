@@ -7,10 +7,10 @@ class Almacen(models.Model):
     _description = "Modelo para llevar el control del almacén"
 
     inventario_id = fields.Many2one("dtm.diseno.almacen")
-    id_inventario = fields.Integer(string="Código")
+    id_inventario = fields.Integer(string="Código", readonly = True)
 
     nombre_materiales = fields.Many2one("dtm.almacen.nombres", string="Nombre materiales")
-    medidas = fields.Char(string="Medidas")
+    medidas = fields.Char(string="Medidas", readonly = True)
     calibre = fields.Selection(string="Calibre", selection = [('10.0',10.0),('11.0',11.0),('12.0',12.0),
                                                                 ('14.0',14.0),('16.0',16.0),('18.0',18.0),
                                                                 ('20.0',20.0),('22.0',22.0),("0.375", "3/8"), ("0.25", "1/4"), ("0.1875", "3/16"), ("0.3125", "5/16"),
@@ -42,7 +42,7 @@ class Almacen(models.Model):
     angulos = fields.Boolean(default=False)
     viga = fields.Boolean(default=False)
 
-    cantidad = fields.Integer(string="Stock")
+    cantidad = fields.Integer(string="Stock", readonly = True)
     cantidad_nueva = fields.Integer(string="Agregar Cantidad")
     codigo_nuevo = fields.Integer(string="Código")
 
@@ -97,74 +97,68 @@ class Almacen(models.Model):
         self.canal = False
         self.angulos = False
         self.viga = False
-        # self.medidas = ""
-        # self.cantidad_nueva = 0
-        # self.calibre = None
-        # self.diametros = None
-        # self.espesor = None
-        # self.largo = 0
-        # self.ancho = 0
-        # self.alto = 0
 
-        if self.nombre_materiales.nombre.find("Lámina") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.alto = 0
-            self.lamina = True
-            self.medidas = f"{self.largo} x {self.ancho} @ {self.calibre}"
-        if self.nombre_materiales.nombre.find("Perfil") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.perfil = True
-            self.medidas = f"{self.alto} x {self.ancho} @ {self.calibre}, {self.largo}"
-        if self.nombre_materiales.nombre.find("Barra") != -1:
-            self.calibre = None
-            self.espesor = None
-            self.ancho = 0
-            self.alto = 0
-            self.barras = True
-            self.medidas = f"Ø {self.diametros} x {self.largo}"
-        if self.nombre_materiales.nombre.find("Tubo") != -1:
-            self.espesor = None
-            self.ancho = 0
-            self.alto = 0
-            self.tubos = True
-            self.medidas = f"{self.diametros} x {self.largo} @ {self.calibre}"
-        if self.nombre_materiales.nombre.find("Placa") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.alto = 0
-            self.placa = True
-            self.medidas = f"{self.largo} x {self.ancho} @ {self.calibre}"
-        if self.nombre_materiales.nombre.find("Solera") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.alto = 0
-            self.solera = True
-            self.medidas = f"{self.largo} x {self.ancho} @ {self.calibre}"
-        if self.nombre_materiales.nombre.find("Varilla") != -1:
-            self.calibre = None
-            self.espesor = None
-            self.ancho = 0
-            self.alto = 0
-            self.varilla = True
-            self.medidas = f"Ø {self.diametros} x {self.largo}"
-        if self.nombre_materiales.nombre.find("Canal") != -1:
-            self.calibre = None
-            self.diametros = None
-            self.canal = True
-            self.medidas = f"{self.alto} x {self.ancho} espesor {self.espesor},{self.largo}"
-        if self.nombre_materiales.nombre.find("Ángulo") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.angulos = True
-            self.medidas = f"{self.alto} x {self.ancho} @ {self.calibre},{self.largo}"
-        if self.nombre_materiales.nombre.find("Viga") != -1:
-            self.diametros = None
-            self.espesor = None
-            self.alto = 0
-            self.viga = True
-            self.medidas = f"{self.largo} x {self.ancho} @ {self.calibre}"
+        if self.nombre_materiales.nombre:
+
+            if self.nombre_materiales.nombre.find("Lámina") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.alto = 0
+                self.lamina = True
+                self.medidas = f"{self.largo if self.largo else ''} x {self.ancho if self.ancho else ''} @ {self.calibre if self.calibre else ''}"
+            if self.nombre_materiales.nombre.find("Perfil") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.perfil = True
+                self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}, {self.largo if self.largo else 0}"
+            if self.nombre_materiales.nombre.find("Barra") != -1:
+                self.calibre = None
+                self.espesor = None
+                self.ancho = 0
+                self.alto = 0
+                self.barras = True
+                self.medidas = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
+            if self.nombre_materiales.nombre.find("Tubo") != -1:
+                self.espesor = None
+                self.ancho = 0
+                self.alto = 0
+                self.tubos = True
+                self.medidas = f"{self.diametros if self.diametros else ''} x {self.largo if self.largo else 0} @ {self.calibre if self.calibre else ''}"
+            if self.nombre_materiales.nombre.find("Placa") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.alto = 0
+                self.placa = True
+                self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
+            if self.nombre_materiales.nombre.find("Solera") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.alto = 0
+                self.solera = True
+                self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
+            if self.nombre_materiales.nombre.find("Varilla") != -1:
+                self.calibre = None
+                self.espesor = None
+                self.ancho = 0
+                self.alto = 0
+                self.varilla = True
+                self.medidas = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
+            if self.nombre_materiales.nombre.find("Canal") != -1:
+                self.calibre = None
+                self.diametros = None
+                self.canal = True
+                self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} espesor {self.espesor},{self.largo if self.largo else 0}"
+            if self.nombre_materiales.nombre.find("Ángulo") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.angulos = True
+                self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''},{self.largo if self.largo else 0}"
+            if self.nombre_materiales.nombre.find("Viga") != -1:
+                self.diametros = None
+                self.espesor = None
+                self.alto = 0
+                self.viga = True
+                self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
 
     @api.onchange("inventario_id")
     def onchange_inventario(self):
