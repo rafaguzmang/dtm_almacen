@@ -1,0 +1,90 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+
+
+}
+
+h1, h6 {
+    color: #71649c;
+}
+
+.container-inventario{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background:rgba(230, 255, 255, .5);
+}
+
+.flex-datos{
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    width: 75%;
+    }
+
+.flex-dato{
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    width: 30%;
+    text-align: center;
+}
+
+.inventario_id{
+    border: 1px solid;
+    border-radius: 45px;
+    width: 50%;
+    align-items: center;
+}
+
+/*-----------------------------Pedacería------------------------------------*/
+.flex-pedaceria{
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    margin-top: 3px;
+    background:rgba(230, 255, 255, .5);
+    }
+
+.flex-materiales{
+    display:flex;
+    width: 50%;
+    justify-content: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.flex-titulo{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    width:75%
+}
+
+.flex-medidas{
+    display: flex;
+    flex-direction: row;
+}
+
+.medidas{
+    text-align: right;
+}
+
+.flex-datos-materiales{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+.boton {
+    width: 50%;
+    height: 40px;
+    margin-bottom: 10px;
+}

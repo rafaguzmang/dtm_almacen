@@ -1,5 +1,7 @@
 from odoo import api,fields,models
 import re
+from odoo.exceptions import ValidationError, AccessError, MissingError,Warning
+
 
 
 class Almacen(models.Model):
@@ -75,15 +77,19 @@ class Almacen(models.Model):
         return res
     #Botón agregar
     def action_cargar_stock(self):
-        get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
-        vals = {
-            "nombre":self.nombre_materiales.nombre,
-            "medida":self.medidas,
-            "cantidad":self.cantidad_nueva
-        }
-        get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
-        get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
-        self.codigo_nuevo = get_inventario.id
+        if self.nombre_materiales:
+            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
+            vals = {
+                "nombre":self.nombre_materiales.nombre,
+                "medida":self.medidas,
+                "cantidad":self.cantidad_nueva
+            }
+            get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
+            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
+            self.codigo_nuevo = get_inventario.id
+        else:
+             raise ValidationError("Nombre y Medida deben estar llenos")
+
 
     @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto")
     def onchange_materiales(self):

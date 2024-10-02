@@ -14,88 +14,109 @@
             <record id="dtm_almacen_accion" model="ir.actions.act_window">
                 <field name="name">Almacén</field>
                 <field name="res_model">dtm.almacen</field>
-                <field name="view_mode">tree,form</field>
+                <field name="view_mode">form</field>
             </record>
-
-           <record id = "dtm_almace_search" model="ir.ui.view">
-               <field name="name">dtm.almacen.search</field>
-               <field name="model">dtm.almacen</field>
-               <field name ="arch" type="xml">
-                   <search>
-<!--                        <field name="id"></field>                     -->
-<!--                        <separator/>-->
-<!--                        <filter string="Lámina completa" name="lamina_completa" domain="['|', '|', '|', ('medida', 'ilike', '120.0 x 48.0 @'), ('medida', 'ilike', '120.0 x 36.0 @'), ('medida', 'ilike', '96.0 x 48.0 @'), ('medida', 'ilike', '96.0 x 36.0 @')]" />-->
-                   </search>
-
-
-               </field>
-           </record>
 
             <record id="dtm_almacen_form" model="ir.ui.view">
                 <field name="name">dtm_almacen_form</field>
                 <field name="model">dtm.almacen</field>
                 <field name="arch" type="xml">
-                        <form string="">
+                        <form string="" create="false" edit="false" delete="false">
                             <sheet>
-                                <group>
-                                    <field name="inventario_id" options="{'no_create': True}"/>
-                                    <field name="id_inventario"  />
-                                    <field name="cantidad"/>
-                                    <field name="nombre_materiales" options="{'no_create': True}"/>
-                                    <field name="medidas"/>
+                                <div class="flex-container">
+                                        <div class="container-inventario">
+                                            <h1>INVENTARIO</h1>
+                                            <field name="inventario_id" options="{'no_create': True}" class="inventario_id"/>
+                                            <div class="flex-datos">
+                                                <div class="flex-dato">
+                                                    <h3>Código</h3>
+                                                    <field name="id_inventario"  />
+                                                </div>
+                                                <div class="flex-dato">
+                                                    <h3>Stock</h3>
+                                                    <field name="cantidad"/>
+                                                </div>
+                                            </div>
+                                        </div>
 
-<!--   _____________________________Lámina_______________________________________________________________________________________________________________________    -->
-                                    <field name="lamina" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('lamina','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('lamina','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('lamina','!=',True)]}"/>
-<!--   _____________________________Perfil_______________________________________________________________________________________________________________________    -->
-                                    <field name="perfil" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('perfil','!=',True)]}"/>
-                                    <field name="alto" attrs="{'invisible': [('perfil','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('perfil','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('perfil','!=',True)]}"/>
-<!--   _____________________________Barras_______________________________________________________________________________________________________________________    -->
-                                    <field name="barras" invisible="1"/>
-                                    <field name="diametros" attrs="{'invisible': [('barras','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('barras','!=',True)]}"/>
-<!--   _____________________________Tubos_______________________________________________________________________________________________________________________    -->
-                                    <field name="tubos" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('tubos','!=',True)]}"/>
-                                    <field name="diametros" attrs="{'invisible': [('tubos','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('tubos','!=',True)]}"/>
-<!--   _____________________________Placa_______________________________________________________________________________________________________________________    -->
-                                    <field name="placa" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('placa','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('placa','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('placa','!=',True)]}"/>
-<!--   _____________________________Solera_______________________________________________________________________________________________________________________    -->
-                                    <field name="solera" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('solera','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('solera','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('solera','!=',True)]}"/>
-<!--   _____________________________Varilla_______________________________________________________________________________________________________________________    -->
-                                    <field name="varilla" invisible="1"/>
-                                    <field name="diametros" attrs="{'invisible': [('varilla','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('varilla','!=',True)]}"/>
-<!--   _____________________________Canal_______________________________________________________________________________________________________________________    -->
-                                    <field name="canal" invisible="1"/>
-                                    <field name="espesor" attrs="{'invisible': [('canal','!=',True)]}"/>
-                                    <field name="alto" attrs="{'invisible': [('canal','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('canal','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('canal','!=',True)]}"/>
-<!--   _____________________________Ángulos_______________________________________________________________________________________________________________________    -->
-                                    <field name="angulos" invisible="1"/>
-                                    <field name="calibre" attrs="{'invisible': [('angulos','!=',True)]}"/>
-                                    <field name="alto" attrs="{'invisible': [('angulos','!=',True)]}"/>
-                                    <field name="ancho" attrs="{'invisible': [('angulos','!=',True)]}"/>
-                                    <field name="largo" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                        <div class="flex-pedaceria">
+                                            <h1>PEDACERÍA</h1>
+                                            <div class="flex-titulo">
+                                                <h6>Nombre</h6>
+                                                <h6>Medida</h6>
+                                            </div>
+                                            <div class="flex-materiales">
+                                                <field name="nombre_materiales" options="{'no_create': True}"/>
+                                                <field name="medidas" class="medidas"/>
+                                            </div>
+                                            <div class="flex-medidas">
+                                                <group>
+                                                     <!--   _____________________________Lámina_______________________________________________________________________________________________________________________    -->
+                                                <field name="lamina" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('lamina','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('lamina','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('lamina','!=',True)]}"/>
+            <!--   _____________________________Perfil_______________________________________________________________________________________________________________________    -->
+                                                <field name="perfil" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                                <field name="alto" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('perfil','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('perfil','!=',True)]}"/>
+            <!--   _____________________________Barras_______________________________________________________________________________________________________________________    -->
+                                                <field name="barras" invisible="1"/>
+                                                <field name="diametros" attrs="{'invisible': [('barras','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('barras','!=',True)]}"/>
+            <!--   _____________________________Tubos_______________________________________________________________________________________________________________________    -->
+                                                <field name="tubos" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('tubos','!=',True)]}"/>
+                                                <field name="diametros" attrs="{'invisible': [('tubos','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('tubos','!=',True)]}"/>
+            <!--   _____________________________Placa_______________________________________________________________________________________________________________________    -->
+                                                <field name="placa" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('placa','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('placa','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('placa','!=',True)]}"/>
+            <!--   _____________________________Solera_______________________________________________________________________________________________________________________    -->
+                                                <field name="solera" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('solera','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('solera','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('solera','!=',True)]}"/>
+            <!--   _____________________________Varilla_______________________________________________________________________________________________________________________    -->
+                                                <field name="varilla" invisible="1"/>
+                                                <field name="diametros" attrs="{'invisible': [('varilla','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('varilla','!=',True)]}"/>
+            <!--   _____________________________Canal_______________________________________________________________________________________________________________________    -->
+                                                <field name="canal" invisible="1"/>
+                                                <field name="espesor" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                                <field name="alto" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('canal','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('canal','!=',True)]}"/>
+            <!--   _____________________________Ángulos_______________________________________________________________________________________________________________________    -->
+                                                <field name="angulos" invisible="1"/>
+                                                <field name="calibre" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                                <field name="alto" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                                <field name="ancho" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                                <field name="largo" attrs="{'invisible': [('angulos','!=',True)]}"/>
+                                                </group>
+                                            </div>
+
+                                            <div class="flex-datos-materiales">
+                                                 <div class="flex-dato">
+                                                    <h5>Código</h5>
+                                                    <field name="codigo_nuevo" options='{"type": "number"}'/>
+                                                </div>
+                                                 <div class="flex-dato">
+                                                     <h5>Cantidad</h5>
+                                                    <field name="cantidad_nueva" options='{"type": "number"}'/>
+                                                </div>
+
+                                            </div>
+                                                <button type="object" name="action_cargar_stock" string="Agregar" icon="fa-solid fa-upload" class="btn btn-primary boton"/>
 
 
-                                    <field name="codigo_nuevo" options='{"type": "number"}'/>
-                                    <field name="cantidad_nueva" options='{"type": "number"}'/>
-                                    <button type="object" name="action_cargar_stock" string="Agregar" icon="fa-solid fa-upload" class="btn btn-primary"/>
-                                </group>
+                                        </div>
+
+                                </div>
                             </sheet>
                         </form>
                 </field>

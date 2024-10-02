@@ -14,9 +14,17 @@
         'views/dtm_almacen_view.xml',
         'views/dtm_almacen_nombres_view.xml',
 
+        #Styles
+
+
         #Menú
 
     ],
     'license': 'LGPL-3',
+    'assets': {
+    'web.assets_backend': [
+        'dtm_almacen/static/src/css/styles.css',
+    ],
+},
 }
 
