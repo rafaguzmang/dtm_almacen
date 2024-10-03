@@ -1,7 +1,7 @@
 .flex-container {
-  display: flex;
-  flex-direction: column;
-
+    display: flex;
+    flex-direction: column;
+    align-items:center;
 
 }
 
@@ -17,6 +17,7 @@ h1, h6 {
     border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     background:rgba(230, 255, 255, .5);
+    width: 75%;
 }
 
 .flex-datos{
@@ -50,11 +51,12 @@ h1, h6 {
     border-radius: 5px;
     margin-top: 3px;
     background:rgba(230, 255, 255, .5);
+    width: 55%;
     }
 
 .flex-materiales{
     display:flex;
-    width: 50%;
+    width: 55%;
     justify-content: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
@@ -78,7 +80,7 @@ h1, h6 {
 .flex-datos-materiales{
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     width: auto;
     margin-bottom: 10px;
 }

@@ -78,8 +78,12 @@ class Almacen(models.Model):
         return res
     #Botón agregar
     def action_cargar_stock(self):
-        print(self.medidas,self.medidas_back)
         if self.nombre_materiales and self.medidas_back:
+            #Busca un id disponible (recicla)
+            for find_id in range(1,self.env['dtm.diseno.almacen'].search([], order='id desc', limit=1).id+1):
+                if not self.env['dtm.diseno.almacen'].search([("id","=",find_id)]):
+                    self.env.cr.execute(f"SELECT setval('dtm_diseno_almacen_id_seq', {find_id}, false);")
+                    break
             get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             vals = {
                 "nombre":self.nombre_materiales.nombre,
@@ -90,6 +94,11 @@ class Almacen(models.Model):
             get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             self.codigo_nuevo = get_inventario.id
             self.medidas = self.medidas_back
+
+            for find_id in range(1,self.env['dtm.diseno.almacen'].search([], order='id desc', limit=1).id+2):
+                if not self.env['dtm.diseno.almacen'].search([("id","=",find_id)]):
+                    self.env.cr.execute(f"SELECT setval('dtm_diseno_almacen_id_seq', {find_id}, false);")
+                    break
         else:
              raise ValidationError("Nombre y Medida deben estar llenos")
 
