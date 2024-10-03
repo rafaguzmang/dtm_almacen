@@ -47,7 +47,8 @@
                                             </div>
                                             <div class="flex-materiales">
                                                 <field name="nombre_materiales" options="{'no_create': True}"/>
-                                                <field name="medidas" class="medidas"/>
+                                                <field name="medidas" class="medidas" />
+                                                <field name="medidas_back" invisible="1"/>
                                             </div>
                                             <div class="flex-medidas">
                                                 <group>

@@ -14,8 +14,6 @@
         'views/dtm_almacen_view.xml',
         'views/dtm_almacen_nombres_view.xml',
 
-        #Styles
-
 
         #Menú
 

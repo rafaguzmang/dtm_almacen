@@ -13,6 +13,7 @@ class Almacen(models.Model):
 
     nombre_materiales = fields.Many2one("dtm.almacen.nombres", string="Nombre materiales")
     medidas = fields.Char(string="Medidas", readonly = True)
+    medidas_back = fields.Char(readonly = False)
     calibre = fields.Selection(string="Calibre", selection = [('10.0',10.0),('11.0',11.0),('12.0',12.0),
                                                                 ('14.0',14.0),('16.0',16.0),('18.0',18.0),
                                                                 ('20.0',20.0),('22.0',22.0),("0.375", "3/8"), ("0.25", "1/4"), ("0.1875", "3/16"), ("0.3125", "5/16"),
@@ -46,7 +47,7 @@ class Almacen(models.Model):
 
     cantidad = fields.Integer(string="Stock", readonly = True)
     cantidad_nueva = fields.Integer(string="Agregar Cantidad")
-    codigo_nuevo = fields.Integer(string="Código")
+    codigo_nuevo = fields.Integer(string="Código", readonly = True)
 
     def get_view(self, view_id=None, view_type='form', **options):#Carga los items de todos los módulos de Almacén en un solo módulo de diseño
         res = super(Almacen,self).get_view(view_id, view_type,**options)
@@ -77,21 +78,23 @@ class Almacen(models.Model):
         return res
     #Botón agregar
     def action_cargar_stock(self):
-        if self.nombre_materiales:
-            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
+        print(self.medidas,self.medidas_back)
+        if self.nombre_materiales and self.medidas_back:
+            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             vals = {
                 "nombre":self.nombre_materiales.nombre,
-                "medida":self.medidas,
+                "medida":self.medidas_back,
                 "cantidad":self.cantidad_nueva
             }
             get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
-            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas)])
+            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             self.codigo_nuevo = get_inventario.id
+            self.medidas = self.medidas_back
         else:
              raise ValidationError("Nombre y Medida deben estar llenos")
 
 
-    @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto")
+    @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto","medidas_back")
     def onchange_materiales(self):
         self.lamina = False
         self.perfil = False
@@ -112,11 +115,13 @@ class Almacen(models.Model):
                 self.alto = 0
                 self.lamina = True
                 self.medidas = f"{self.largo if self.largo else ''} x {self.ancho if self.ancho else ''} @ {self.calibre if self.calibre else ''}"
+                self.medidas_back = f"{self.largo if self.largo else ''} x {self.ancho if self.ancho else ''} @ {self.calibre if self.calibre else ''}"
             if self.nombre_materiales.nombre.find("Perfil") != -1:
                 self.diametros = None
                 self.espesor = None
                 self.perfil = True
                 self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}, {self.largo if self.largo else 0}"
+                self.medidas_back = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}, {self.largo if self.largo else 0}"
             if self.nombre_materiales.nombre.find("Barra") != -1:
                 self.calibre = None
                 self.espesor = None
@@ -124,24 +129,28 @@ class Almacen(models.Model):
                 self.alto = 0
                 self.barras = True
                 self.medidas = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
+                self.medidas_back = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
             if self.nombre_materiales.nombre.find("Tubo") != -1:
                 self.espesor = None
                 self.ancho = 0
                 self.alto = 0
                 self.tubos = True
                 self.medidas = f"{self.diametros if self.diametros else ''} x {self.largo if self.largo else 0} @ {self.calibre if self.calibre else ''}"
+                self.medidas_back = f"{self.diametros if self.diametros else ''} x {self.largo if self.largo else 0} @ {self.calibre if self.calibre else ''}"
             if self.nombre_materiales.nombre.find("Placa") != -1:
                 self.diametros = None
                 self.espesor = None
                 self.alto = 0
                 self.placa = True
                 self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
+                self.medidas_back = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
             if self.nombre_materiales.nombre.find("Solera") != -1:
                 self.diametros = None
                 self.espesor = None
                 self.alto = 0
                 self.solera = True
                 self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
+                self.medidas_back = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
             if self.nombre_materiales.nombre.find("Varilla") != -1:
                 self.calibre = None
                 self.espesor = None
@@ -149,22 +158,26 @@ class Almacen(models.Model):
                 self.alto = 0
                 self.varilla = True
                 self.medidas = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
+                self.medidas_back = f"Ø {self.diametros if self.diametros else ''} x {self.largo if self.largo else 0}"
             if self.nombre_materiales.nombre.find("Canal") != -1:
                 self.calibre = None
                 self.diametros = None
                 self.canal = True
                 self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} espesor {self.espesor},{self.largo if self.largo else 0}"
+                self.medidas_back = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} espesor {self.espesor},{self.largo if self.largo else 0}"
             if self.nombre_materiales.nombre.find("Ángulo") != -1:
                 self.diametros = None
                 self.espesor = None
                 self.angulos = True
                 self.medidas = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''},{self.largo if self.largo else 0}"
+                self.medidas_back = f"{self.alto if self.alto else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''},{self.largo if self.largo else 0}"
             if self.nombre_materiales.nombre.find("Viga") != -1:
                 self.diametros = None
                 self.espesor = None
                 self.alto = 0
                 self.viga = True
                 self.medidas = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
+                self.medidas_back = f"{self.largo if self.largo else 0} x {self.ancho if self.ancho else 0} @ {self.calibre if self.calibre else ''}"
 
     @api.onchange("inventario_id")
     def onchange_inventario(self):
