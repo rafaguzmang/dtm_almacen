@@ -9,7 +9,8 @@ class Almacen(models.Model):
     _description = "Modelo para llevar el control del almacén"
 
     inventario_id = fields.Many2one("dtm.diseno.almacen")
-    id_inventario = fields.Integer(string="Código", readonly = True)
+    id_inventario = fields.Integer(string="Código", readonly = False)
+    codigo = fields.Integer(readonly=True)
 
     nombre_materiales = fields.Many2one("dtm.almacen.nombres", string="Nombre materiales")
     medidas = fields.Char(string="Medidas", readonly = True)
@@ -45,9 +46,10 @@ class Almacen(models.Model):
     angulos = fields.Boolean(default=False)
     viga = fields.Boolean(default=False)
 
-    cantidad = fields.Integer(string="Stock", readonly = True)
+    cantidad = fields.Integer(string="Stock", readonly = False)
     cantidad_nueva = fields.Integer(string="Agregar Cantidad")
     codigo_nuevo = fields.Integer(string="Código", readonly = True)
+    localizacion = fields.Char(string="Localización")
 
     def get_view(self, view_id=None, view_type='form', **options):#Carga los items de todos los módulos de Almacén en un solo módulo de diseño
         res = super(Almacen,self).get_view(view_id, view_type,**options)
@@ -88,7 +90,8 @@ class Almacen(models.Model):
             vals = {
                 "nombre":self.nombre_materiales.nombre,
                 "medida":self.medidas_back,
-                "cantidad":self.cantidad_nueva
+                "cantidad":self.cantidad_nueva,
+                "localizacion":self.localizacion
             }
             get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
             get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
@@ -102,6 +105,14 @@ class Almacen(models.Model):
         else:
              raise ValidationError("Nombre y Medida deben estar llenos")
 
+    def action_actualizar(self):
+        vals = {
+            "cantidad":self.cantidad,
+            "localizacion":self.localizacion
+        }
+        if self.id_inventario:
+            print("codigo",self.id_inventario)
+            self.env['dtm.diseno.almacen'].search([("id","=",self.id_inventario)]).write(vals)
 
     @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto","medidas_back")
     def onchange_materiales(self):
@@ -191,6 +202,7 @@ class Almacen(models.Model):
     @api.onchange("inventario_id")
     def onchange_inventario(self):
         self.id_inventario = self.inventario_id.id
+        self.codigo = self.inventario_id.id
         self.cantidad = self.inventario_id.cantidad
         get_inventario = self.env['dtm.diseno.almacen'].search([]).mapped('nombre')
         list_items = []

@@ -18,6 +18,7 @@ h1, h6 {
     border-radius: 5px;
     background:rgba(230, 255, 255, .5);
     width: 55%;
+
 }
 
 .flex-datos{
@@ -83,6 +84,10 @@ h1, h6 {
     justify-content: space-between;
     width: auto;
     margin-bottom: 10px;
+}
+
+.localizacion {
+    width:100%;
 }
 
 .boton {
