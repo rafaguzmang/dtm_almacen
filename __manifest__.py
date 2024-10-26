@@ -22,7 +22,6 @@
     'assets': {
     'web.assets_backend': [
         'dtm_almacen/static/src/css/styles.css',
-    ],
-},
+        ],
+    },
 }
-
