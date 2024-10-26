@@ -2,8 +2,6 @@ from odoo import api,fields,models
 import re
 from odoo.exceptions import ValidationError, AccessError, MissingError,Warning
 
-
-
 class Almacen(models.Model):
     _name = "dtm.almacen"
     _description = "Modelo para llevar el control del almacén"
@@ -47,8 +45,14 @@ class Almacen(models.Model):
     viga = fields.Boolean(default=False)
 
     cantidad = fields.Integer(string="Stock", readonly = False)
+    apartado = fields.Integer(string="Proyectado", readonly = False)
+    disponible = fields.Integer(string="Disponible", readonly = False)
     cantidad_nueva = fields.Integer(string="Agregar Cantidad")
+    apartado_nueva = fields.Integer(string="Agregar Proyectado")
+    disponible_nueva = fields.Integer(string="Agregar Disponible")
     codigo_nuevo = fields.Integer(string="Código", readonly = True)
+
+
     localizacion = fields.Char(string="Localización")
 
     def get_view(self, view_id=None, view_type='form', **options):#Carga los items de todos los módulos de Almacén en un solo módulo de diseño
@@ -91,7 +95,7 @@ class Almacen(models.Model):
                 "nombre":self.nombre_materiales.nombre,
                 "medida":self.medidas_back,
                 "cantidad":self.cantidad_nueva,
-                "localizacion":self.localizacion
+                "localizacion":self.localizacion,
             }
             get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
             get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
@@ -108,10 +112,11 @@ class Almacen(models.Model):
     def action_actualizar(self):
         vals = {
             "cantidad":self.cantidad,
-            "localizacion":self.localizacion
+            "localizacion":self.localizacion,
+            "apartado":self.apartado,
+            "disponible":self.disponible,
         }
         if self.id_inventario:
-            print("codigo",self.id_inventario)
             self.env['dtm.diseno.almacen'].search([("id","=",self.id_inventario)]).write(vals)
 
     @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto","medidas_back")
@@ -204,6 +209,8 @@ class Almacen(models.Model):
         self.id_inventario = self.inventario_id.id
         self.codigo = self.inventario_id.id
         self.cantidad = self.inventario_id.cantidad
+        self.apartado = self.inventario_id.apartado
+        self.disponible = self.inventario_id.disponible
         get_inventario = self.env['dtm.diseno.almacen'].search([]).mapped('nombre')
         list_items = []
         for item in get_inventario:

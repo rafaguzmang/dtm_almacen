@@ -37,6 +37,15 @@
                                                     <h3>Stock</h3>
                                                     <field name="cantidad" options='{"type": "number"}'/>
                                                 </div>
+                                                <div class="flex-dato">
+                                                    <h3>Apartado</h3>
+                                                    <field name="apartado" options='{"type": "number"}'/>
+                                                </div>
+                                                <div class="flex-dato">
+                                                    <h3>Disponible</h3>
+                                                    <field name="disponible" options='{"type": "number"}'/>
+                                                </div>
+
                                             </div>
                                              <div class="flex-dato">
                                                 <h5>Localaizaciòn</h5>
