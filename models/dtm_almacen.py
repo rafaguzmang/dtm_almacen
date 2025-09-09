@@ -6,7 +6,7 @@ class Almacen(models.Model):
     _name = "dtm.almacen"
     _description = "Modelo para llevar el control del almacén"
 
-    inventario_id = fields.Many2one("dtm.diseno.almacen")
+    inventario_id = fields.Many2one("dtm.materiales")
     id_inventario = fields.Integer(string="Código", readonly = False)
     codigo = fields.Integer(readonly=True)
 
@@ -47,13 +47,26 @@ class Almacen(models.Model):
     cantidad = fields.Integer(string="Stock", readonly = False)
     apartado = fields.Integer(string="Proyectado", readonly = False)
     disponible = fields.Integer(string="Disponible", readonly = False)
-    cantidad_nueva = fields.Integer(string="Agregar Cantidad")
+    cantidad_nueva = fields.Integer(string="Agregar Cantidad",require=True)
     apartado_nueva = fields.Integer(string="Agregar Proyectado")
     disponible_nueva = fields.Integer(string="Agregar Disponible")
     codigo_nuevo = fields.Integer(string="Código", readonly = True)
 
 
     localizacion = fields.Char(string="Localización")
+
+    @api.model
+    def create(self, vals):
+
+        if 'cantidad_nueva' in vals and vals['cantidad_nueva'] <= 0:
+            raise ValidationError("La cantidad debe ser mayor a cero")
+
+
+        record = super(Almacen, self).create(vals)
+
+
+
+        return record
 
     def get_view(self, view_id=None, view_type='form', **options):#Carga los items de todos los módulos de Almacén en un solo módulo de diseño
         res = super(Almacen,self).get_view(view_id, view_type,**options)
@@ -86,11 +99,8 @@ class Almacen(models.Model):
     def action_cargar_stock(self):
         if self.nombre_materiales and self.medidas_back:
             #Busca un id disponible (recicla)
-            for find_id in range(1,self.env['dtm.diseno.almacen'].search([], order='id desc', limit=1).id+1):
-                if not self.env['dtm.diseno.almacen'].search([("id","=",find_id)]):
-                    self.env.cr.execute(f"SELECT setval('dtm_diseno_almacen_id_seq', {find_id}, false);")
-                    break
-            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
+
+            get_inventario = self.env['dtm.materiales'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             vals = {
                 "nombre":self.nombre_materiales.nombre,
                 "medida":self.medidas_back,
@@ -98,14 +108,11 @@ class Almacen(models.Model):
                 "localizacion":self.localizacion,
             }
             get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
-            get_inventario = self.env['dtm.diseno.almacen'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
+            get_inventario = self.env['dtm.materiales'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             self.codigo_nuevo = get_inventario.id
             self.medidas = self.medidas_back
 
-            for find_id in range(1,self.env['dtm.diseno.almacen'].search([], order='id desc', limit=1).id+2):
-                if not self.env['dtm.diseno.almacen'].search([("id","=",find_id)]):
-                    self.env.cr.execute(f"SELECT setval('dtm_diseno_almacen_id_seq', {find_id}, false);")
-                    break
+
         else:
              raise ValidationError("Nombre y Medida deben estar llenos")
 
@@ -117,7 +124,7 @@ class Almacen(models.Model):
             "disponible":self.disponible,
         }
         if self.id_inventario:
-            self.env['dtm.diseno.almacen'].search([("id","=",self.id_inventario)]).write(vals)
+            self.env['dtm.materiales'].search([("id","=",self.id_inventario)]).write(vals)
 
     @api.onchange("nombre_materiales","calibre","diametros","espesor","largo","ancho","alto","medidas_back")
     def onchange_materiales(self):
@@ -211,7 +218,7 @@ class Almacen(models.Model):
         self.cantidad = self.inventario_id.cantidad
         self.apartado = self.inventario_id.apartado
         self.disponible = self.inventario_id.disponible
-        get_inventario = self.env['dtm.diseno.almacen'].search([]).mapped('nombre')
+        get_inventario = self.env['dtm.materiales'].search([]).mapped('nombre')
         list_items = []
         for item in get_inventario:
             if item:
