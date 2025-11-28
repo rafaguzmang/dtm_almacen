@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+  <t t-name="dtm_almacen.transito" owl="1">
+    <h3 class="text-primary">Transito</h3>
+    <table class="table table-striped">
+        <thead style="width: 100%;">
+            <tr style="width: 100%;">
+              <th>Proveedor</th>
+              <th>Orden de Compra</th>
+              <th>Codigo</th>
+              <th>Descripción</th>
+              <th>Solicitado</th>
+              <th>Recibido</th>
+              <th>Cantidad</th>
+              <th>Factura</th>
+              <th>Notas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <t t-foreach="state.entradas" t-as="entrada" t-key="entrada.num">
+                <tr>
+                    <td><t t-esc="entrada.proveedor" /></td>
+                    <td name="orden_compra"><t t-esc="entrada.orden_compra" /></td>
+                    <td><t t-esc="entrada.codigo" /></td>
+                    <td><t t-esc="entrada.descripcion" /></td>
+                    <td name="solicitado"><t t-esc="entrada.solicitado" /></td>
+                    <td name="recibido"><t t-esc="entrada.recibido" /></td>
+                    <td style="width:5%"><!-- Cantidad agregada por almacén -->
+                        <input type="number" min = "-1"
+                               t-on-change="(ev)=> this.cantidadIngresada(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.solicitado,entrada.recibido)"/>
+                    </td>
+                    <td style="width:8%">                        
+                        <input type="text" name="factura" t-att-value="entrada.factura" t-on-change="(ev)=>this.factura(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.orden_compra)"/>
+                    </td>
+                    <td>
+                        <input type="text" name="notas" t-att-value="entrada.notas" t-on-change="(ev)=>this.notas(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.orden_compra)"/>
+                    </td>
+                </tr>
+            </t>
+        </tbody>
+    </table>
+
+  </t>
+</templates>

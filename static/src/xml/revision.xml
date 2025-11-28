@@ -1,0 +1,35 @@
+<templates xml:space="preserve">
+  <t t-name="dtm_almacen.revision" owl="1">
+      <h3 class="text-primary">Revisión de Material</h3>
+      <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Descripción</th>
+          <th>Stock</th>
+          <th>Requerido</th>
+          <th>Comprar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <t t-foreach="state.materiales" t-as="material" t-key="material.codigo">
+            <tr>
+                <td><t t-esc="material.codigo"/></td>
+                <td><t t-esc="material.descripcion"/></td>
+                <td><t t-esc="material.stock"/></td>
+                <td><t t-esc="material.requerido"/></td>
+                <td><t t-esc="material.comprar"/></td>
+                <td></td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  t-on-click="() => this.mandarComprar(material.codigo, material.descripcion, material.stock, material.requerido, material.comprar)">
+                  <i class="fa fa-check" aria-hidden="true"></i>Revición
+                </button>
+
+            </tr>
+        </t>
+      </tbody>
+    </table>
+  </t>
+</templates>

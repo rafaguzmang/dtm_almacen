@@ -12,7 +12,7 @@
             </record>
 
             <record id="dtm_almacen_accion" model="ir.actions.act_window">
-                <field name="name">Almacén</field>
+                <field name="name">Pedacería</field>
                 <field name="res_model">dtm.almacen</field>
                 <field name="view_mode">form</field>
             </record>
@@ -141,7 +141,7 @@
                 </field>
             </record>
 
-        <menuitem id="dtm_almacen_menu" action="dtm_almacen_accion" />
+<!--        <menuitem id="dtm_almacen_menu" action="dtm_almacen_accion" />-->
        </data>
 
 

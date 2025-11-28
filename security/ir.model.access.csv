@@ -1,6 +1,7 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_dtm_almacen,access.dtm.almacen,model_dtm_almacen,base.group_user,1,1,1,1
 access_dtm_almacen_nombres,access.dtm.almacen.nombres,model_dtm_almacen_nombres,base.group_user,1,1,1,1
+access_dtm_almacen_salidas,access.dtm.almacen.salidas,model_dtm_almacen_salidas,base.group_user,1,1,1,1
 
 
 

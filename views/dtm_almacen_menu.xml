@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+     <menuitem name="Almacén" id="menu_root_dtm_almacen">
+        <menuitem id="dtm_almacen_seguimiento_menu" action="dtm_almacen_seguimiento_action"/>
+        <menuitem id="dtm_almacen_transito_menu" action="dtm_almacen_transito_action"/>
+        <menuitem id="dtm_almacen_salidas_menu" action="dtm_almacen_salidas_action"/>
+        <menuitem id="dtm_almacen_menu" action="dtm_almacen_accion" />
+        <menuitem id="dtm_almacen_salidas_view_menu" action="dtm_almacen_salidas_view_action" />
+
+     </menuitem>
+</odoo>

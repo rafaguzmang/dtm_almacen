@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="dtm_almacen_seguimiento_action" model="ir.actions.client">
+        <field  name="name">Revisión</field>
+        <field name="tag">dtm_almacen.revision</field>
+    </record>
+<!--    <menuitem id="dtm_almacen_seguimiento_menu" action="dtm_almacen_seguimiento_action"/>-->
+
+    <record id="dtm_almacen_transito_action" model="ir.actions.client">
+        <field  name="name">Transito</field>
+        <field name="tag">dtm_almacen.transito</field>
+    </record>
+<!--    <menuitem id="dtm_almacen_transito_menu" action="dtm_almacen_transito_action"/>-->
+
+    <record id="dtm_almacen_salidas_action" model="ir.actions.client">
+        <field name="name">Salidas</field>
+        <field name="tag">dtm_almacen.salidas</field>
+    </record>
+<!--    <menuitem id="dtm_almacen_salidas_menu" action="dtm_almacen_salidas_action"/>-->
+
+</odoo>
