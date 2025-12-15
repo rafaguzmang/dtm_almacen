@@ -14,22 +14,26 @@ class Material(http.Controller):
         # Se itera por el resultado de los codigos que deben ser revisados y que no estan repetidos
         for codigo in get_norepetidos:
             get_materiales = request.env['dtm.materials.line'].search([('materials_list','=',codigo)])
-            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity > r.materials_availabe and r.entregado != True and r.model_id.firma_ventas)
+            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity > r.materials_availabe and not r.entregado  and r.model_id.firma_ventas)
+            get_apartado = get_materiales.filtered(lambda r: not r.entregado  and r.model_id.firma_ventas)
+            # Se obtienen los datos del material del almacén
             stock = get_materiales[0].materials_list.cantidad
+            apartado = sum(get_apartado.mapped('materials_cuantity'))
             nombre = get_materiales[0].materials_list.nombre
             medida = get_materiales[0].materials_list.medida
             cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
             entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
             comprar = max(cantidad - entregado,0)
-            # codigo == 2366 and print(stock,nombre,medida)
-            # codigo == 2366 and print(cantidad)
-            # codigo == 640 and print(entregado)
-            # codigo == 2366 and print(comprar)
+            if stock >= apartado:
+                comprar = 0;
+
+
             if cantidad > 0:
                 resultado.append({
                         'codigo':codigo,
                         'descripcion': f"{nombre} {medida}",
                         'stock': stock,
+                        'apartado':apartado,
                         'requerido':cantidad,
                         'comprar':comprar,
                 })
@@ -172,11 +176,15 @@ class Material(http.Controller):
             get_item =  get_odt.materials_ids.filtered_domain([('materials_list', '=', codigo)])
             if cantidad > orden.cantidad:# Si la cantidad cubre lo solicitado se iguala lo pedido a lo entregado
                 orden.write({'cantidad_almacen':orden.cantidad})
-                get_item.write({'materials_availabe': orden.cantidad})
+                get_item.write({'materials_availabe': orden.cantidad,
+                                'materials_required': 0
+                                })
                 cantidad -= orden.cantidad
             else:# Si la cantidad es igual o menor se entrega la cantidad y se detiene la iteración
                 orden.write({'cantidad_almacen':orden.cantidad_almacen + cantidad})
-                get_item.write({'materials_availabe':get_item.materials_availabe + cantidad})
+                get_item.write({'materials_availabe':get_item.materials_availabe + cantidad,
+                                'materials_required': get_item.materials_required - cantidad
+                                })
                 break
 
         if get_comprado[0].tipo_orden in ['OT','NPI']:

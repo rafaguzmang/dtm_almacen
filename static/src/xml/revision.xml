@@ -7,6 +7,7 @@
           <th>#</th>
           <th>Descripción</th>
           <th>Stock</th>
+          <th>Apartado</th>
           <th>Requerido</th>
           <th>Comprar</th>
         </tr>
@@ -17,6 +18,7 @@
                 <td><t t-esc="material.codigo"/></td>
                 <td><t t-esc="material.descripcion"/></td>
                 <td><t t-esc="material.stock"/></td>
+                <td><t t-esc="material.apartado"/></td>
                 <td><t t-esc="material.requerido"/></td>
                 <td><t t-esc="material.comprar"/></td>
                 <td></td>
