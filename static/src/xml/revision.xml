@@ -26,7 +26,7 @@
                   type="button"
                   class="btn btn-primary"
                   t-on-click="() => this.mandarComprar(material.codigo, material.descripcion, material.stock, material.requerido, material.comprar)">
-                  <i class="fa fa-check" aria-hidden="true"></i>Revición
+                  <i class="fa fa-check" aria-hidden="true"></i>Revisión
                 </button>
 
             </tr>

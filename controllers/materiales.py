@@ -13,30 +13,34 @@ class Material(http.Controller):
         resultado = []
         # Se itera por el resultado de los codigos que deben ser revisados y que no estan repetidos
         for codigo in get_norepetidos:
+            # Se obtienen todas las ordenes que requieren este material
             get_materiales = request.env['dtm.materials.line'].search([('materials_list','=',codigo)])
-            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity > r.materials_availabe and not r.entregado  and r.model_id.firma_ventas)
-            get_apartado = get_materiales.filtered(lambda r: not r.entregado  and r.model_id.firma_ventas)
-            # Se obtienen los datos del material del almacén
-            stock = get_materiales[0].materials_list.cantidad
-            apartado = sum(get_apartado.mapped('materials_cuantity'))
-            nombre = get_materiales[0].materials_list.nombre
-            medida = get_materiales[0].materials_list.medida
-            cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
-            entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
-            comprar = max(cantidad - entregado,0)
-            if stock >= apartado:
-                comprar = 0;
+            # Se filtra el material no revisado por almacén
+            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity > r.materials_availabe and not r.entregado and not r.almacen  and r.model_id.firma_ventas)
+            if get_materiales_filtros:
+                # Se filtra para obtener el apartado tomando en cuenta los items que no se han estregado
+                get_apartado = get_materiales.filtered(lambda r: not r.entregado  and r.model_id.firma_ventas)
+                # Se obtienen los datos del material del almacén
+                stock = get_materiales[0].materials_list.cantidad
+                apartado = sum(get_apartado.mapped('materials_cuantity'))
+                nombre = get_materiales[0].materials_list.nombre
+                medida = get_materiales[0].materials_list.medida
+                cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
+                entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
+                comprar = max(cantidad - entregado,0)
+                if stock >= apartado:
+                    comprar = 0;
 
 
-            if cantidad > 0:
-                resultado.append({
-                        'codigo':codigo,
-                        'descripcion': f"{nombre} {medida}",
-                        'stock': stock,
-                        'apartado':apartado,
-                        'requerido':cantidad,
-                        'comprar':comprar,
-                })
+                if cantidad > 0:
+                    resultado.append({
+                            'codigo':codigo,
+                            'descripcion': f"{nombre} {medida}",
+                            'stock': stock,
+                            'apartado':apartado,
+                            'requerido':cantidad,
+                            'comprar':comprar,
+                    })
         return request.make_response(
             json.dumps(resultado),
             headers={

@@ -17,7 +17,7 @@ export class Revision extends Component{
         onMounted(() => {
             interval = setInterval(()=>{
                 this.cargarMateriales();
-            },5000)
+            },50000)
         })
 
         onWillUnmount(() => {
