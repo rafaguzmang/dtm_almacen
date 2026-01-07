@@ -1,9 +1,24 @@
 /** @odoo-module **/
 import { Component, useState,onWillStart,onMounted,onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+//import { useService, useBus } from "@web/core/utils/hooks";
 
 export class Revision extends Component{
     setup(){
+//        this.busService = this.env.services.bus_service;
+//        this.notification.useService("pos_notification");
+//        this.busService.addEventListener('notification', this.onMessage.bind(this))
+
+//        useBus(this.env.bus, "notification", (notifications) => {
+//            console.log("Notificaciones recibidas:", notifications);
+//            for (const notif of notifications) {
+//                const channel = Array.isArray(notif.channel) ? notif.channel[1] : notif.channel;
+//                if (channel === "mi_canal") {
+//                    console.log("Mensaje recibido:", notif.message);
+//                }
+//            }
+//        });
+
 
         this.state = useState({
             materiales:[]

@@ -27,10 +27,12 @@ class Material(http.Controller):
                 medida = get_materiales[0].materials_list.medida
                 cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
                 entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
-                comprar = max(cantidad - entregado,0)
+                get_requerido = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}")])
+                get_realizado = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}"),('comprado','not in',["Recibido","Parcial"])])
+                en_compras = sum(get_realizado.mapped('cantidad')) + sum(get_requerido.mapped('cantidad'))
+                comprar = max(apartado - en_compras - stock,0)
                 if stock >= apartado:
                     comprar = 0;
-
 
                 if cantidad > 0:
                     resultado.append({
@@ -39,6 +41,7 @@ class Material(http.Controller):
                             'stock': stock,
                             'apartado':apartado,
                             'requerido':cantidad,
+                            'en_compras':en_compras,
                             'comprar':comprar,
                     })
         return request.make_response(
@@ -56,13 +59,14 @@ class Material(http.Controller):
         data = json.loads(raw)
         codigo = data.get('codigo')
         nombre = data.get('descripcion')
-        # Se buscan la ordenes que ya están en compras para restarlo de las nuevas solicitudes y no mutar en la cantidad
+        # Se buscan la ordenes que ya está en cotización para restarlo de las nuevas solicitudes y no mutar en la cantidad
         get_cotizacion = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',nombre)])
-        cantidad_cotizacion = sum(get_cotizacion.mapped('cantidad'))
+        # cantidad_cotizacion = sum(get_cotizacion.mapped('cantidad'))
+        #Busca si el material ya esta en compras ya sea para comprar o en espera, mas no recibido
         get_compras = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('nombre','=',nombre),('comprado','!=','Recibido')])
-        cantidad_compras = sum(get_compras.mapped('cantidad'))
-        en_compras = cantidad_compras + cantidad_cotizacion
-        comprar = data.get('comprar') - en_compras # Cantidad a comprar
+        # cantidad_compras = sum(get_compras.mapped('cantidad'))
+        # en_compras = cantidad_compras + cantidad_cotizacion
+        comprar = max(data.get('comprar'),0) # Cantidad a comprar
 
         # Se buscan las ordenes que no están en compras
         list_compras = get_cotizacion.mapped('orden_trabajo') # Se obtienen las ordenes de compras realizado (cotización)
@@ -80,11 +84,11 @@ class Material(http.Controller):
         ordenes_faltantes_lts = list(filter(lambda x: x not in ordenes_compras,lista_materiales))#Se obtienen las ordenes que no están en compras
         # Se agregan las odenes a requerido para el control de solicitudes
         for orden in ordenes_faltantes_lts:
-            orden_id = request.env['dtm.odt'].sudo().search([('ot_number','=',orden)])# Se obtiene el id de la orden
+            orden_id = request.env['dtm.odt'].sudo().search([('ot_number','=',orden)])# Se obtiene el id de la orden para filtrar
             record = request.env['dtm.materials.line'].sudo().search([('model_id','=',orden_id.id),('materials_list','=',data.get('codigo'))])# Con el id de la orden y el código podemos obtener el item requerido
             get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',orden),('tipo_orden','in',['OT','NPI']),('codigo','=',data.get('codigo'))])
             cantidad = record.materials_cuantity if comprar >= record.materials_cuantity else comprar
-            comprar = max(comprar - record.materials_cuantity,0)
+            # comprar = max(comprar - record.materials_cuantity,0)
             if cantidad > 0:
                 vals = {
                     'orden_trabajo':orden,

@@ -8,7 +8,7 @@
           <th>Descripción</th>
           <th>Stock</th>
           <th>Apartado</th>
-          <th>Requerido</th>
+          <th>En Compras</th>
           <th>Comprar</th>
         </tr>
       </thead>
@@ -19,7 +19,7 @@
                 <td><t t-esc="material.descripcion"/></td>
                 <td><t t-esc="material.stock"/></td>
                 <td><t t-esc="material.apartado"/></td>
-                <td><t t-esc="material.requerido"/></td>
+                <td><t t-esc="material.en_compras"/></td>
                 <td><t t-esc="material.comprar"/></td>
                 <td></td>
                 <button
