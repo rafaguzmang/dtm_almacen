@@ -59,9 +59,14 @@ class Material(http.Controller):
         data = json.loads(raw)
         codigo = data.get('codigo')
         nombre = data.get('descripcion')
+        lamina_list = ["120.0 x 48.0", "96.0 x 48.0", "96.0 x 36.0", "60.0 x 48.0", ",236.0", "120.0 x 72.0"]
+        perfileria_list  = ["Perfil", "Tubo", "P.T.R.","Ángulos","Canales","I.P.R","Varilla","Viga"]
+        permiso = True
+        if 'Lámina' in nombre:
+            permiso = True in [medida in nombre for medida in lamina_list]
 
-        # if 'Lámina' in nombre:
-
+        if True in [perfileria in nombre for perfileria in perfileria_list]:
+            permiso = "236.0" in nombre
         # Se buscan la ordenes que ya está en cotización para restarlo de las nuevas solicitudes y no mutar en la cantidad
         get_cotizacion = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',nombre)])
         # cantidad_cotizacion = sum(get_cotizacion.mapped('cantidad'))
@@ -82,7 +87,7 @@ class Material(http.Controller):
             ('materials_cuantity','>',0),
             ])
         # Se buscan las ordenes que estan solicitando el material
-        get_materials_list_filtro = get_materials_list.filtered(lambda r: r.materials_cuantity > r.materials_availabe)# Se filtra por cantidad mayor a material entregado
+        get_materials_list_filtro = get_materials_list.filtered(lambda r: r.materials_cuantity >= r.materials_availabe)# Se filtra por cantidad mayor a material entregado
         lista_materiales = list(set(get_materials_list_filtro.mapped('model_id.ot_number'))) # Se hace un set
         ordenes_faltantes_lts = list(filter(lambda x: x not in ordenes_compras,lista_materiales))#Se obtienen las ordenes que no están en compras
         # Se agregan las odenes a requerido para el control de solicitudes
@@ -92,7 +97,7 @@ class Material(http.Controller):
             get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',orden),('tipo_orden','in',['OT','NPI']),('codigo','=',data.get('codigo'))])
             cantidad = record.materials_cuantity if comprar >= record.materials_cuantity else comprar
             # comprar = max(comprar - record.materials_cuantity,0)
-            if cantidad > 0:
+            if cantidad > 0 and permiso:
                 vals = {
                     'orden_trabajo':orden,
                     'tipo_orden':orden_id.tipe_order,
