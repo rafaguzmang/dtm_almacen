@@ -22,6 +22,16 @@
         </field>
     </record>
 
+    <record id = "dtm_almacen_salidas_search" model="ir.ui.view">
+            <field name="name">dtm_almacen_salidas_search</field>
+            <field name="model">dtm.almacen.salidas</field>
+            <field name ="arch" type="xml">
+               <search>
+                    <field name="codigo_material"/>
+               </search>
+            </field>
+    </record>
+
 <!--    <menuitem id="dtm_almacen_salidas_view_menu" action="dtm_almacen_salidas_view_action" />-->
    </data>
    

@@ -16,7 +16,7 @@ class Material(http.Controller):
             # Se obtienen todas las ordenes que requieren este material
             get_materiales = request.env['dtm.materials.line'].search([('materials_list','=',codigo)])
             # Se filtra el material no revisado por almacén
-            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity > r.materials_availabe and not r.entregado and not r.almacen  and r.model_id.firma_ventas)
+            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity >= r.materials_availabe and not r.entregado and not r.almacen  and r.model_id.firma_ventas)
             if get_materiales_filtros:
                 # Se filtra para obtener el apartado tomando en cuenta los items que no se han estregado
                 get_apartado = get_materiales.filtered(lambda r: not r.entregado  and r.model_id.firma_ventas)
@@ -26,7 +26,7 @@ class Material(http.Controller):
                 nombre = get_materiales[0].materials_list.nombre
                 medida = get_materiales[0].materials_list.medida
                 cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
-                entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
+                # entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
                 get_requerido = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}")])
                 get_realizado = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}"),('comprado','not in',["Recibido","Parcial"])])
                 en_compras = sum(get_realizado.mapped('cantidad')) + sum(get_requerido.mapped('cantidad'))
@@ -59,6 +59,9 @@ class Material(http.Controller):
         data = json.loads(raw)
         codigo = data.get('codigo')
         nombre = data.get('descripcion')
+
+        # if 'Lámina' in nombre:
+
         # Se buscan la ordenes que ya está en cotización para restarlo de las nuevas solicitudes y no mutar en la cantidad
         get_cotizacion = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',nombre)])
         # cantidad_cotizacion = sum(get_cotizacion.mapped('cantidad'))
@@ -155,7 +158,7 @@ class Material(http.Controller):
             }
         )
 
-    # Función para capturar cantidad recivida, número de factura y notas ingresadas por almacen Post
+    # Función para capturar cantidad recibida, número de factura y notas ingresadas por almacen Post
     @http.route('/transito_lectura', type='json', auth='public', csrf=False)
     def transitoLectura(self):
         raw = request.httprequest.data
@@ -174,6 +177,8 @@ class Material(http.Controller):
             ('proveedor','=',proveedor),
             ('nombre','=',descripcion),
             ('orden_compra','=',orden_compra),
+            ('orden_compra','=',orden_compra),
+            ('listo_btn', '=', 'True'),
         ])
         # Reparte la cantidad ingresada en los diferentes posibles ordenes (diseño)
         for orden in get_comprado:
@@ -214,6 +219,7 @@ class Material(http.Controller):
             ('proveedor', '=', proveedor),
             ('nombre', '=', descripcion),
             ('orden_compra', '=', orden_compra),
+            ('listo_btn', '=', 'True'),
         ])
         ingresado = sum(get_comprado.mapped('cantidad_almacen'))
         total = sum(get_comprado.mapped('cantidad'))
