@@ -22,13 +22,17 @@
     'license': 'LGPL-3',
     'assets': {
     'web.assets_backend': [
+        # JS
         'dtm_almacen/static/src/css/styles.css',
-        'dtm_almacen/static/src/xml/revision.xml',
         'dtm_almacen/static/src/js/revision.js',
         'dtm_almacen/static/src/js/transito.js',
-        'dtm_almacen/static/src/xml/transito.xml',
         'dtm_almacen/static/src/js/salidas.js',
+        'dtm_almacen/static/src/js/consumibles.js',
+        # XML
+        'dtm_almacen/static/src/xml/revision.xml',
+        'dtm_almacen/static/src/xml/transito.xml',
         'dtm_almacen/static/src/xml/salidas.xml',
+        'dtm_almacen/static/src/xml/consumibles.xml',
         ],
     },
 }

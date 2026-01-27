@@ -16,10 +16,10 @@ class Material(http.Controller):
             # Se obtienen todas las ordenes que requieren este material
             get_materiales = request.env['dtm.materials.line'].search([('materials_list','=',codigo)])
             # Se filtra el material no revisado por almacén
-            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity >= r.materials_availabe and not r.entregado and not r.almacen  and r.model_id.firma_ventas)
+            get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity >= r.materials_availabe and r.materials_required > 0 and not r.almacen  and r.model_id.firma_ventas)
             if get_materiales_filtros:
                 # Se filtra para obtener el apartado tomando en cuenta los items que no se han estregado
-                get_apartado = get_materiales.filtered(lambda r: not r.entregado  and r.model_id.firma_ventas)
+                get_apartado = get_materiales.filtered(lambda r: r.materials_required > 0  and r.model_id.firma_ventas)
                 # Se obtienen los datos del material del almacén
                 stock = get_materiales[0].materials_list.cantidad
                 apartado = sum(get_apartado.mapped('materials_cuantity'))
@@ -352,6 +352,29 @@ class Material(http.Controller):
             'cantidad': max(nueva_cantidad, 0),
         })
         return data
+
+    # Función para cargar los consumibles
+    @http.route('/material_consumibles', type='http', auth='public', csrf=False)
+    def material_directo(self):
+        consumibles = request.env['dtm.consumibles'].sudo().search([])
+        json_list = []
+        for material in consumibles:
+            vals = {
+                'codigo':material.id,
+                'nombre':material.nombre,
+                'cantidad':material.cantidad,
+                'minimo':material.minimo,
+                'maximo':material.maximo,
+            }
+            json_list.append(vals)
+        return request.make_response(
+            json.dumps(json_list),
+            headers={
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        )
+
 
 
 

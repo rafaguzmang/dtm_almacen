@@ -1,0 +1,49 @@
+<templates xml:space="preserve">
+    <t t-name="dtm_almacen.consumibles" owl="1">
+        <div class="container mt-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Mínimo</th>
+                        <th>Máximo</th>
+                        <th>Cant a Entregar</th>
+                        <th>Recibe</th>
+                        <th>Notas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="this.state.consumibles" t-as="material" t-key="material.codigo">
+                         <tr>
+                            <td><t t-esc="material.codigo"/></td>
+                            <td><t t-esc="material.nombre"/></td>
+                            <td><t t-esc="material.cantidad"/></td>
+                            <td><t t-esc="material.minimo"/></td>
+                            <td><t t-esc="material.maximo"/></td>
+                            <td>
+                                <input type="number" min="0"/>
+                            </td>
+                            <td>
+                                <select>
+                                    <option value="">--</option>
+                                    <t t-foreach="this.state.empleados" t-as="variable" t-key="variable.id">
+                                        <option t-att-value="variable.id">
+                                            <t t-esc="variable.nombre"/>
+                                        </option>                                        
+                                    </t>
+                                   
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text"/>
+                            </td>
+                        </tr>     
+                    </t>
+                                 
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>
