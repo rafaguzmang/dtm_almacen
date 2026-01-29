@@ -28,11 +28,13 @@
         'dtm_almacen/static/src/js/transito.js',
         'dtm_almacen/static/src/js/salidas.js',
         'dtm_almacen/static/src/js/consumibles.js',
+        'dtm_almacen/static/src/js/dialog/lamina_dialog.js',
         # XML
         'dtm_almacen/static/src/xml/revision.xml',
         'dtm_almacen/static/src/xml/transito.xml',
         'dtm_almacen/static/src/xml/salidas.xml',
         'dtm_almacen/static/src/xml/consumibles.xml',
+        'dtm_almacen/static/src/xml/dialog/lamina_dialog.xml',
         ],
     },
 }

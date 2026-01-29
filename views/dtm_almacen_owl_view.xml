@@ -23,5 +23,4 @@
         <field name="tag">dtm_almacen.consumibles</field>
     </record>
     <menuitem id="dtm_almacen_consumibles_menu" action="dtm_almacen_consumible_action"/>
-
 </odoo>

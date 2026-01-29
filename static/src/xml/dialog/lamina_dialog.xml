@@ -1,0 +1,37 @@
+<template xml:space="preserve">
+    <t t-name="dtm_almacen.lamina_dialog" owl="1">
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Material Cortado </h5>
+                  <button type="button" class="btn-close" aria-label="Close" t-on-click="props.cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Lámina</th>                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <t t-foreach="this.state.laminas" t-as="lamina" t-key="lamina.id">
+                        <tr>
+                          <td><t t-esc="lamina.lamina"/></td>                          
+                          <td>
+                            <button t-on-click="() => this.quitarLamina(lamina.lamina)">Quitar</button>                          </td>
+                        </tr>                    
+                      </t>
+                      
+                    </tbody>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" t-on-click="props.cerrar">Cerrar</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+    </t>
+</template>

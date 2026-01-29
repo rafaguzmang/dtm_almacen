@@ -1,27 +1,46 @@
 /** @odoo-module **/
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
 import { registry } from "@web/core/registry";
+import { LaminaDialogo }  from "./dialog/lamina_dialog";
 
 export class Salidas extends Component{
+    static components = {LaminaDialogo};
     setup(){
         this.state = useState({
             materiales:[],
             personal:[],
             filtro:[],
+            laminas:false,
+            laminasDialog:false,
         })
+        let interval = null;
 
         onWillStart(async () => {
             await this.cargarMaterial();
-            await this.cargarPersonal();            
-        })        
+            await this.cargarPersonal(); 
+            await this.materialCortado();           
+        })   
+        
+        onMounted(() => {
+            interval = setInterval(()=>{
+               this.materialCortado();
+            },10000)
+        });
+
     }
+
+    async materialCortado(){
+        const response = await fetch("material_cortado");
+        const data = await response.json();      
+        console.log(data); 
+        this.state.laminas = data.length>0?true:false;       
+    }
+
     async cargarMaterial(){
             const response = await fetch("/leer_material");
             const data = await response.json();
             this.state.materiales = data;
             this.state.filtro = data;
-
-            // console.log(this.state.materiales)
     }
 
     async cargarPersonal(){
@@ -83,6 +102,14 @@ export class Salidas extends Component{
         const data = await response.json();        
         console.log(data.result);  
         this.cargarMaterial();
+    }
+    // Función para mostrar las láminas cortadas
+    laminasFunc(){
+        this.state.laminasDialog = true;
+    }
+
+    laminasFuncClose = () =>{
+        this.state.laminasDialog = false;
     }
 
     // -----------------------------------Funciones de filtro-------------------------

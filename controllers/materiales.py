@@ -375,16 +375,31 @@ class Material(http.Controller):
             }
         )
 
+    @http.route('/material_cortado', type='http', auth='public', csrf=False)
+    def material_cortado(self):
 
+        result = [
+            {
+                'lamina':corte.lamina
+            }
+            for corte in request.env['dtm.control.laminas'].sudo().search([])
+        ]
 
+        return request.make_response(
+            json.dumps(result),
+            headers={
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*'
+            }
+        )
 
+    # Borra el material del modelo de las láminas cortadas
+    @http.route('/borrar_material', type='json', auth='public', csrf=False)
+    def borrar_material(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        lamina = data.get('lamina')
+        get_control = request.env['dtm.control.laminas'].sudo().search([('lamina','=',lamina)],limit=1)
+        get_control.unlink() if get_control else None
 
-
-
-
-
-
-
-
-
-
+        return {'Borrado':'Borrado'}

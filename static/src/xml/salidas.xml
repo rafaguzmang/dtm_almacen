@@ -1,78 +1,87 @@
 <template xml:space="preserve">
     <t t-name="dtm_almacen.salidas" owl="1">
         <h3 class="text-primary">Material Indirecto</h3>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Medida</th>
-              <th>Stock</th>
-              <th>Solicitado</th>
-              <th>Salida</th>
-              <th>Responsable</th>
-              <th>Localizacion</th>
-            </tr>    
-          </thead>
-          <tbody>
-          <!-- Filtro -->
-            <tr>
-              <td>
-                <input type="number" name="codigo_filtro" min="0" placeholder="Código" 
-                  t-on-input	="(ev)=> this.codigoFiltro(ev)"/>
-              </td>
-              <td>
-                <input type="text" name="nombre_filtro" placeholder="Nombre" 
-                  t-on-input="(ev) => this.nombreFiltro(ev)"/>
-              </td>
-              <td>
-                <input type="text" name="medida_filtro" placeholder="Medida"
-                  t-on-input="(ev) => this.medidaFiltro(ev)"/>
-              </td>
-              <td>
-                <select  name="stock_filtro" t-on-change="(ev) => this.stockFiltro(ev)">
-                  <option value="">--</option>
-                  <option value="con_stock">Con stock</option>
-                  <option value="sin_stock">Sin stock</option>  
-                </select>
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <input type="text" placeholder="Localización"/>
-              </td>            
-            </tr>
-            <!-- Contenido -->
-            <t t-foreach="state.materiales" t-as="material" t-key="material.codigo">
+        <button class="btn btn-warning my-3 " t-on-click="laminasFunc" t-if="state.laminas">Lámias cortadas</button>
+        <div style="max-height:300px; overflow-y:auto;">
+          <table class="table" border="1" style="width:100%; border-collapse:collapse;">
+            <thead>
               <tr>
-                <td name="codigo_material"><t t-esc="material.codigo"/></td>
-                <td><t t-esc="material.nombre"/></td>
-                <td><t t-esc="material.medida"/></td>
-                <td> <!--Stock-->
-                  <input type="number" min="0" t-att-value="material.cantidad" t-on-change="(ev) => this.actualizarStock(ev)"/> <!--Cantidad disponible-->
-                </td>
-                <td><t t-esc="material.apartado"/></td>
-                <td> <!--Cantidad a entregar-->
-                  <input type="number" min="0" value="0" t-on-change='(ev)=>this.cantidadSalida(ev)'/>
-                </td>
-                <td> <!--Responsable que recibe el material-->
-                    <select name="lista_personal">
-                        <option value="">--Seleccione--</option>
-                        <t t-foreach="state.personal" t-as="persona" t-key="persona.id">
-                            <option t-att-value="persona.id">
-                                <t t-esc="persona.nombre"/>
-                            </option>
-                        </t>
-                    </select>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Medida</th>
+                <th>Stock</th>
+                <th>Solicitado</th>
+                <th>Salida</th>
+                <th>Responsable</th>
+                <th>Localizacion</th>
+              </tr>    
+            </thead>
+            <tbody>
+            <!-- Filtro -->
+              <tr>
+                <td>
+                  <input type="number" name="codigo_filtro" min="0" placeholder="Código" 
+                    t-on-input	="(ev)=> this.codigoFiltro(ev)"/>
                 </td>
                 <td>
-                    <input type="text" t-att-value="material.localizacion"/>            
-                </td>                
+                  <input type="text" name="nombre_filtro" placeholder="Nombre" 
+                    t-on-input="(ev) => this.nombreFiltro(ev)"/>
+                </td>
+                <td>
+                  <input type="text" name="medida_filtro" placeholder="Medida"
+                    t-on-input="(ev) => this.medidaFiltro(ev)"/>
+                </td>
+                <td>
+                  <select  name="stock_filtro" t-on-change="(ev) => this.stockFiltro(ev)">
+                    <option value="">--</option>
+                    <option value="con_stock">Con stock</option>
+                    <option value="sin_stock">Sin stock</option>  
+                  </select>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                  <input type="text" placeholder="Localización"/>
+                </td>            
               </tr>
-            </t>
-          </tbody>
-        </table>
+              <!-- Contenido -->
+              <t t-foreach="state.materiales" t-as="material" t-key="material.codigo">
+                <tr>
+                  <td name="codigo_material"><t t-esc="material.codigo"/></td>
+                  <td><t t-esc="material.nombre"/></td>
+                  <td><t t-esc="material.medida"/></td>
+                  <td> <!--Stock-->
+                    <input type="number" min="0" t-att-value="material.cantidad" t-on-change="(ev) => this.actualizarStock(ev)"/> <!--Cantidad disponible-->
+                  </td>
+                  <td><t t-esc="material.apartado"/></td>
+                  <td> <!--Cantidad a entregar-->
+                    <input type="number" min="0" value="0" t-on-change='(ev)=>this.cantidadSalida(ev)'/>
+                  </td>
+                  <td> <!--Responsable que recibe el material-->
+                      <select name="lista_personal">
+                          <option value="">--Seleccione--</option>
+                          <t t-foreach="state.personal" t-as="persona" t-key="persona.id">
+                              <option t-att-value="persona.id">
+                                  <t t-esc="persona.nombre"/>
+                              </option>
+                          </t>
+                      </select>
+                  </td>
+                  <td>
+                      <input type="text" t-att-value="material.localizacion"/>            
+                  </td>                
+                </tr>
+              </t>
+            </tbody>
+          </table>
+        </div>
+
+        <div t-if="state.laminasDialog">
+          <LaminaDialogo cerrar="laminasFuncClose"/>
+        </div>
+            
+        
+
     </t>
 </template>
