@@ -8,12 +8,59 @@ export class Consumibles extends Component {
         this.state = useState({
             consumibles: [],
             empleados: [],
+            filtro_tabla: [],
         })
 
         onWillStart(async () => {
             await this.cargarConsumibles();
             await this.empleados();
         })
+
+    }
+
+    // Filtros
+    async buscarCodigo(event) {
+        // Al buscar por código, se invalidan los demás filtros
+        const inputs = document.querySelectorAll('input[name^="search_"]');
+        inputs.forEach(input => {
+            if (input !== event.target) input.value = '';
+        });
+
+        const codigo = event.target.value.trim();
+        if (codigo === "") {
+            // Si está vacío, restaurar todos
+            this.state.consumibles = this.state.filtro_tabla;
+        } else {
+            // Búsqueda exacta
+            this.state.consumibles = this.state.filtro_tabla.filter(c => c.codigo == codigo); // Comparación laxa por si tipos difieren, o estricta si seguros. String vs Number.
+        }
+        console.log("Búsqueda exacta por código:", codigo);
+    }
+
+    async cantidadConsumible(event) {
+        const cantidad = event.target.value;
+        const codigo = event.target.closest('tr').querySelector('[name=td_codigo]').innerText;
+        const response = await fetch("/cantidad_consumible", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                cantidad: cantidad,
+                codigo: codigo,
+            })
+        });
+        const data = await response.json();
+        await this.cargarConsumibles();
+    }
+
+    async buscarConsumible(event) {
+        // Al buscar por otros campos, se invalida el código
+        const inputCodigo = document.querySelector('input[name="search_codigo"]');
+        if (inputCodigo) inputCodigo.value = '';
+        const nombre = event.target.value;
+        console.log(nombre);
+        this.state.consumibles = this.state.filtro_tabla.filter(c => c.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()));
 
     }
 
@@ -24,7 +71,7 @@ export class Consumibles extends Component {
         const select = event.target.closest('tr').querySelector('[name=lista_personal]');
         const recibe = select?.options[select.selectedIndex].text ?? '';
         const notas = event.target.closest('tr').querySelector('[name=notas]').value;
-        if (recibe === '--') {
+        if (recibe === 'Seleccionar...') {
             alert('Seleccione un responsable para la salida de material');
             event.target.value = 0;
             return;
@@ -39,6 +86,7 @@ export class Consumibles extends Component {
                 },
                 body: JSON.stringify({
                     cantidad: cantidad,
+                    nombre: nombre,
                     codigo: codigo,
                     recibe: recibe,
                     notas: notas,
@@ -76,6 +124,7 @@ export class Consumibles extends Component {
         const response = await fetch("/material_consumibles");
         const data = await response.json();
         this.state.consumibles = data;
+        this.state.filtro_tabla = data;
     }
 
     async empleados() {

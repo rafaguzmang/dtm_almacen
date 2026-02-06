@@ -10,20 +10,12 @@
             <div class="consumibles-filtros">
                 <div class="filtro-item">
                     <label>Código</label>
-                    <input type="text" class="filtro-input" placeholder="Buscar por código" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
+                    <input type="text" name="search_codigo" class="filtro-input" placeholder="Buscar por código" t-on-change="(ev)=>this.buscarCodigo(ev)"/>
                 </div>
                 <div class="filtro-item">
                     <label>Nombre</label>
-                    <input type="text" class="filtro-input" placeholder="Buscar por nombre" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
-                </div>
-                <div class="filtro-item">
-                    <label>Cantidad</label>
-                    <input type="text" class="filtro-input" placeholder="Buscar por cantidad" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
-                </div>
-                <div class="filtro-item">
-                    <label>Mínimo</label>
-                    <input type="text" class="filtro-input" placeholder="Buscar por mínimo" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
-                </div>
+                    <input type="text" class="filtro-input" placeholder="Buscar por nombre" t-on-input="(ev)=>this.buscarConsumible(ev)"/>
+                </div>            
             </div>
 
             <!-- Tabla -->
@@ -53,9 +45,7 @@
                                 </td>
                                 <!-- Cantidad -->
                                 <td class="td-cantidad">
-                                    <span class="cantidad-badge">
-                                        <t t-esc="material.cantidad"/>
-                                    </span>
+                                    <input type="number" min="0" class="input-numero" t-att-value="material.cantidad" t-on-change="(ev)=>this.cantidadConsumible(ev)"/>                                   
                                 </td>
                                 <!-- Mínimo -->
                                 <td class="td-minimo">

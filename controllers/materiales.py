@@ -402,9 +402,18 @@ class Material(http.Controller):
             'notas':notas,
         })
         get_consumibles = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)],limit=1)
-        print(get_consumibles)
         get_consumibles.write({'cantidad':max(get_consumibles.cantidad - int(cantidad),0)})
 
+        return {'codigo':codigo}
+
+    @http.route('/cantidad_consumible', type='json', auth='public', csrf=False)
+    def cantidad_consumible(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        cantidad = data.get('cantidad')
+        codigo = data.get('codigo')
+        get_consumibles = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)],limit=1)
+        get_consumibles.write({'cantidad':int(cantidad)})
         return {'codigo':codigo}
 
     @http.route('/material_cortado', type='http', auth='public', csrf=False)
