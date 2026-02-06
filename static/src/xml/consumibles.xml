@@ -1,49 +1,90 @@
 <templates xml:space="preserve">
     <t t-name="dtm_almacen.consumibles" owl="1">
-        <div class="container mt-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Mínimo</th>
-                        <th>Máximo</th>
-                        <th>Cant a Entregar</th>
-                        <th>Recibe</th>
-                        <th>Notas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <t t-foreach="this.state.consumibles" t-as="material" t-key="material.codigo">
-                         <tr>
-                            <td><t t-esc="material.codigo"/></td>
-                            <td><t t-esc="material.nombre"/></td>
-                            <td><t t-esc="material.cantidad"/></td>
-                            <td><t t-esc="material.minimo"/></td>
-                            <td><t t-esc="material.maximo"/></td>
-                            <td>
-                                <input type="number" min="0"/>
-                            </td>
-                            <td>
-                                <select>
-                                    <option value="">--</option>
-                                    <t t-foreach="this.state.empleados" t-as="variable" t-key="variable.id">
-                                        <option t-att-value="variable.id">
-                                            <t t-esc="variable.nombre"/>
-                                        </option>                                        
-                                    </t>
-                                   
-                                </select>
-                            </td>
-                            <td>
-                                <input type="text"/>
-                            </td>
-                        </tr>     
-                    </t>
-                                 
-                </tbody>
-            </table>
+        <div class="consumibles-container">
+            <!-- Encabezado -->
+            <div class="consumibles-header">
+                <h1>Control de Consumibles</h1>
+            </div>
+
+            <!-- Filtros -->
+            <div class="consumibles-filtros">
+                <div class="filtro-item">
+                    <label>Código</label>
+                    <input type="text" class="filtro-input" placeholder="Buscar por código" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
+                </div>
+                <div class="filtro-item">
+                    <label>Nombre</label>
+                    <input type="text" class="filtro-input" placeholder="Buscar por nombre" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
+                </div>
+                <div class="filtro-item">
+                    <label>Cantidad</label>
+                    <input type="text" class="filtro-input" placeholder="Buscar por cantidad" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
+                </div>
+                <div class="filtro-item">
+                    <label>Mínimo</label>
+                    <input type="text" class="filtro-input" placeholder="Buscar por mínimo" t-on-change="(ev)=>this.buscarConsumible(ev)"/>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="consumibles-tabla-wrapper">
+                <table class="consumibles-tabla">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Mínimo</th>
+                            <th>Cant. a Entregar</th>
+                            <th>Recibe</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="this.state.consumibles" t-as="material" t-key="material.codigo">
+                            <tr t-attf-class="consumible-row #{(material.cantidad &lt; material.minimo) ? 'alerta-stock' : ''}">
+                                <!-- Código -->
+                                <td class="td-codigo" name='td_codigo'>
+                                    <span class="codigo-badge"><t t-esc="material.codigo"/></span>
+                                </td>
+                                <!-- Nombre -->
+                                <td class="td-nombre" name='td_nombre'>
+                                    <t t-esc="material.nombre"/>
+                                </td>
+                                <!-- Cantidad -->
+                                <td class="td-cantidad">
+                                    <span class="cantidad-badge">
+                                        <t t-esc="material.cantidad"/>
+                                    </span>
+                                </td>
+                                <!-- Mínimo -->
+                                <td class="td-minimo">
+                                    <input type="number" min="0" class="input-numero" t-att-value="material.minimo" t-on-change="(ev)=>this.minimoConsumible(ev)"/>
+                                </td>
+                                <!-- Cant a Entregar -->
+                                <td class="td-entregar">
+                                    <input type="number" min="0" class="input-numero" placeholder="0" t-on-change="(ev)=>this.entregarConsumible(ev)"/>
+                                </td>
+                                <!-- Recibe -->
+                                <td class="td-recibe">
+                                    <select name="lista_personal" class="select-personal">
+                                        <option value="">Seleccionar...</option>
+                                        <t t-foreach="this.state.empleados" t-as="variable" t-key="variable.id">
+                                            <option t-att-value="variable.id">
+                                                <t t-esc="variable.nombre"/>
+                                            </option>                                        
+                                        </t>                                   
+                                    </select>
+                                </td> 
+                                <!-- Notas -->                           
+                                <td class="td-notas">
+                                    <input type="text" name="notas" class="input-notas" placeholder="Agregar nota..."/>
+                                </td>
+                            </tr>     
+                        </t>
+                    </tbody>
+                </table>
+            </div>
         </div>        
     </t>
 </templates>

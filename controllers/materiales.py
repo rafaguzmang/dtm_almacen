@@ -375,6 +375,38 @@ class Material(http.Controller):
             }
         )
 
+    @http.route('/minimo_consumible',type='json',auth='public',csrf=False)
+    def minimo_consumible(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        minimo = data.get('minimo')
+        codigo = data.get('codigo')
+        get_consumibles = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)],limit=1)
+        get_consumibles.write({'minimo':int(minimo)}) if get_consumibles else None
+        return {'Listo':minimo}
+
+    @http.route('/entregado_consumible', type='json', auth='public',csrf=False)
+    def entregado_consumible(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        codigo = data.get('codigo')
+        nombre = data.get('nombre')
+        cantidad = data.get('cantidad')
+        recibe = data.get('recibe')
+        notas = data.get('notas')
+        request.env['dtm.consumibles.historial'].create({
+            'codigo':codigo,
+            'nombre':nombre,
+            'cantidad':cantidad,
+            'recibe':recibe,
+            'notas':notas,
+        })
+        get_consumibles = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)],limit=1)
+        print(get_consumibles)
+        get_consumibles.write({'cantidad':max(get_consumibles.cantidad - int(cantidad),0)})
+
+        return {'codigo':codigo}
+
     @http.route('/material_cortado', type='http', auth='public', csrf=False)
     def material_cortado(self):
 

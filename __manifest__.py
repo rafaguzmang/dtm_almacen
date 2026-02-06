@@ -22,8 +22,11 @@
     'license': 'LGPL-3',
     'assets': {
     'web.assets_backend': [
-        # JS
+        # CSS
         'dtm_almacen/static/src/css/styles.css',
+        'dtm_almacen/static/src/css/consumibles.css',
+        'dtm_almacen/static/src/css/salidas.css',
+        # JS
         'dtm_almacen/static/src/js/revision.js',
         'dtm_almacen/static/src/js/transito.js',
         'dtm_almacen/static/src/js/salidas.js',
