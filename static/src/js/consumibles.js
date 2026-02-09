@@ -123,8 +123,13 @@ export class Consumibles extends Component {
     async cargarConsumibles() {
         const response = await fetch("/material_consumibles");
         const data = await response.json();
-        this.state.consumibles = data;
-        this.state.filtro_tabla = data;
+        const dataSort = data.sort((a, b) => {
+            const aCond = a.cantidad < a.minimo ? 1 : 0;
+            const bCond = b.cantidad < b.minimo ? 1 : 0;
+            return bCond - aCond;
+        })
+        this.state.consumibles = dataSort;
+        this.state.filtro_tabla = dataSort;
     }
 
     async empleados() {

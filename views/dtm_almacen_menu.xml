@@ -8,6 +8,5 @@
         <menuitem id="dtm_almacen_salidas_view_menu" action="dtm_almacen_salidas_view_action" />
         <menuitem id="dtm_almacen_consumibles_menu" action="dtm_almacen_consumible_action"/>
         <menuitem id="dtm_consumibles_historial_menu" action="dtm_diseno.dtm_consumibles_historial_act_window"/>
-
      </menuitem>
 </odoo>
