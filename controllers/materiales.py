@@ -421,7 +421,8 @@ class Material(http.Controller):
 
         result = [
             {
-                'lamina':corte.lamina
+                'lamina':corte.lamina,
+                'cantidad':corte.cantidad
             }
             for corte in request.env['dtm.control.laminas'].sudo().search([])
         ]

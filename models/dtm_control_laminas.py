@@ -6,3 +6,4 @@ class Control(models.Model):
 
 
     lamina = fields.Char(string='Nombre')
+    cantidad = fields.Integer(string='Cantidad')

@@ -1,42 +1,47 @@
+.text-center {
+    text-align: center;
+}
+
 .flex-container {
     display: flex;
     flex-direction: column;
-    align-items:center;
+    align-items: center;
 
 }
 
-h1, h6 {
+h1,
+h6 {
     color: #71649c;
 }
 
-.container-inventario{
-    display:flex;
+.container-inventario {
+    display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 5px;
-    background:rgba(230, 255, 255, .5);
+    background: rgba(230, 255, 255, .5);
     width: 55%;
 
 }
 
-.flex-datos{
-    display:flex;
-    flex-direction:row;
+.flex-datos {
+    display: flex;
+    flex-direction: row;
     justify-content: center;
     width: 75%;
-    }
+}
 
-.flex-dato{
-    display:flex;
-    flex-direction:column;
+.flex-dato {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     width: 30%;
     text-align: center;
 }
 
-.inventario_id{
+.inventario_id {
     border: 1px solid;
     border-radius: 45px;
     width: 50%;
@@ -44,41 +49,41 @@ h1, h6 {
 }
 
 /*-----------------------------Pedacería------------------------------------*/
-.flex-pedaceria{
-    display:flex;
-    flex-direction:column;
+.flex-pedaceria {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     margin-top: 3px;
-    background:rgba(230, 255, 255, .5);
+    background: rgba(230, 255, 255, .5);
     width: 55%;
-    }
+}
 
-.flex-materiales{
-    display:flex;
+.flex-materiales {
+    display: flex;
     width: 55%;
     justify-content: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-.flex-titulo{
-    display:flex;
-    flex-direction:row;
+.flex-titulo {
+    display: flex;
+    flex-direction: row;
     justify-content: space-around;
-    width:75%
+    width: 75%
 }
 
-.flex-medidas{
+.flex-medidas {
     display: flex;
     flex-direction: row;
 }
 
-.medidas{
+.medidas {
     text-align: right;
 }
 
-.flex-datos-materiales{
+.flex-datos-materiales {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -87,7 +92,7 @@ h1, h6 {
 }
 
 .localizacion {
-    width:100%;
+    width: 100%;
 }
 
 .boton {

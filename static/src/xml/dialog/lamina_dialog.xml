@@ -12,12 +12,14 @@
                     <thead>
                       <tr>
                         <th>Lámina</th>                        
+                        <th class="text-center">Cantidad</th>                        
                       </tr>
                     </thead>
                     <tbody>
                       <t t-foreach="this.state.laminas" t-as="lamina" t-key="lamina.id">
                         <tr>
                           <td><t t-esc="lamina.lamina"/></td>                          
+                          <td class="text-center"><t t-esc="lamina.cantidad"/></td>                          
                           <td>
                             <button t-on-click="() => this.quitarLamina(lamina.lamina)">Quitar</button>                          </td>
                         </tr>                    
