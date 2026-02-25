@@ -82,7 +82,7 @@ class Material(http.Controller):
         ordenes_compras = list_compras + list_realizado # La lista solo tiene cadena de caracteres
         ordenes_compras = list(set(list(map(int,ordenes_compras)))) # Lista en ints, se quitan repetidos en caso de que hayan
         get_materials_list = request.env['dtm.materials.line'].sudo().search([
-            ('materials_list','=',data.get('codigo')),
+            ('materials_list','=',codigo),
             ('model_id','!=',False),
             ('materials_cuantity','>',0),
             ])
@@ -93,16 +93,16 @@ class Material(http.Controller):
         # Se agregan las odenes a requerido para el control de solicitudes
         for orden in ordenes_faltantes_lts:
             orden_id = request.env['dtm.odt'].sudo().search([('ot_number','=',orden)])# Se obtiene el id de la orden para filtrar
-            record = request.env['dtm.materials.line'].sudo().search([('model_id','=',orden_id.id),('materials_list','=',data.get('codigo'))])# Con el id de la orden y el código podemos obtener el item requerido
-            get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',orden),('tipo_orden','in',['OT','NPI']),('codigo','=',data.get('codigo'))])
+            record = request.env['dtm.materials.line'].sudo().search([('model_id','=',orden_id.id),('materials_list','=',codigo)])# Con el id de la orden y el código podemos obtener el item requerido
+            get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',orden),('tipo_orden','in',['OT','NPI']),('codigo','=',codigo)])
             cantidad = record.materials_cuantity if comprar >= record.materials_cuantity else comprar
             # comprar = max(comprar - record.materials_cuantity,0)
-            if cantidad > 0 and permiso:
+            if record.materials_required > 0 and cantidad > 0 and permiso:
                 vals = {
                     'orden_trabajo':orden,
                     'tipo_orden':orden_id.tipe_order,
                     'revision_ot':orden_id.revision_ot,
-                    'codigo':data.get('codigo'),
+                    'codigo':codigo,
                     'nombre':f"{record.materials_list.nombre} {record.materials_list.medida if record.materials_list.medida else '.' }",
                     'cantidad':cantidad,
                     'disenador':orden_id.disenador,
