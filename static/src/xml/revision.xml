@@ -1,37 +1,59 @@
 <templates xml:space="preserve">
   <t t-name="dtm_almacen.revision" owl="1">
-      <h3 class="text-primary">Revisión de Material</h3>
-      <table class="table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Descripción</th>
-          <th>Stock</th>
-          <th>Apartado</th>
-          <th>En Compras </th>
-          <th>Comprar</th>
-        </tr>
-      </thead>
-      <tbody>
-        <t t-foreach="state.materiales" t-as="material" t-key="material.codigo">
+
+    <div class="dtm-revision-view">
+      <p class="rev-title">Revisión de Material</p>
+      <div class="rev-table-wrap">
+        <table>
+          <thead>
             <tr>
+              <th>#</th>
+              <th>Descripción</th>
+              <th>Stock</th>
+              <th>Apartado</th>
+              <th>En Compras</th>
+              <th>Comprar</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <t t-foreach="state.materiales" t-as="material" t-key="material.codigo">
+              <tr>
                 <td><t t-esc="material.codigo"/></td>
                 <td><t t-esc="material.descripcion"/></td>
-                <td><t t-esc="material.stock"/></td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    t-att-value="material.stock"
+                    t-on-change="(e) => this.updateStock(material.codigo, e.target.value)"
+                  />
+                </td>
                 <td><t t-esc="material.apartado"/></td>
                 <td><t t-esc="material.en_compras"/></td>
                 <td><t t-esc="material.comprar"/></td>
-                <td></td>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  t-on-click="() => this.mandarComprar(material.codigo, material.descripcion, material.stock, material.requerido, material.comprar)">
-                  <i class="fa fa-check" aria-hidden="true"></i>Revisión
-                </button>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-revision"
+                    t-on-click="() => this.mandarComprar(
+                      material.codigo,
+                      material.descripcion,
+                      material.stock,
+                      material.requerido,
+                      material.comprar
+                    )"
+                  >
+                    <i class="fa fa-check" aria-hidden="true"/>
+                    Revisión
+                  </button>
+                </td>
+              </tr>
+            </t>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-            </tr>
-        </t>
-      </tbody>
-    </table>
   </t>
 </templates>

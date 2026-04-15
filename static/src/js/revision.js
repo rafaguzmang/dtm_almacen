@@ -1,12 +1,12 @@
 /** @odoo-module **/
-import { Component, useState,onWillStart,onMounted,onWillUnmount } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 //import { useService, useBus } from "@web/core/utils/hooks";
 
-export class Revision extends Component{
-    setup(){
+export class Revision extends Component {
+    setup() {
         this.state = useState({
-            materiales:[]
+            materiales: []
         })
         let interval = null;
 
@@ -15,34 +15,56 @@ export class Revision extends Component{
         })
 
         onMounted(() => {
-            interval = setInterval(()=>{
+            interval = setInterval(() => {
                 this.cargarMateriales();
-            },50000)
+            }, 50000)
         })
 
         onWillUnmount(() => {
             clearInterval(interval)
         })
-//        Llama a cargar la tabla
+        //        Llama a cargar la tabla
         this.cargarMateriales = async () => {
             try {
-                  const response = await fetch('/revision_material');
-                  const data = await response.json();
-                  this.state.materiales = data;
-                } catch (error) {
-                  console.error("Error al cargar materiales:", error);
-                }
-            };
+                const response = await fetch('/revision_material');
+                const data = await response.json();
+                this.state.materiales = data;
+            } catch (error) {
+                console.error("Error al cargar materiales:", error);
+            }
+        };
     }
 
-//    Botón para validar la información
-    async mandarComprar(codigo,descripcion,stock,requerido,comprar) {
-        const payload = {   codigo: codigo,
-                            descripcion:descripcion,
-                            stock:stock,
-                            requerido:requerido,
-                            comprar:comprar,
-                        };
+    async updateStock(codigo, nuevoStock) {
+        console.log(codigo, nuevoStock);
+        try {
+            const response = await fetch('/update_stock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    codigo: codigo,
+                    stock: nuevoStock,
+                }),
+            });
+            const data = await response.json();
+        } catch (error) {
+            console.error("Error al enviar JSON:", error);
+        }
+        this.cargarMateriales();
+    }
+
+    //    Botón para validar la información
+    async mandarComprar(codigo, descripcion, stock, requerido, comprar) {
+        const payload = {
+            codigo: codigo,
+            descripcion: descripcion,
+            stock: stock,
+            requerido: requerido,
+            comprar: comprar,
+        };
         try {
             const response = await fetch('/material_compras', {
                 method: 'POST',
@@ -67,4 +89,4 @@ export class Revision extends Component{
 }
 
 Revision.template = "dtm_almacen.revision"
-registry.category("actions").add("dtm_almacen.revision",Revision)
+registry.category("actions").add("dtm_almacen.revision", Revision)

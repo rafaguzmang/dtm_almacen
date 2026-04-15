@@ -52,6 +52,7 @@ export class Consumibles extends Component {
         });
         const data = await response.json();
         await this.cargarConsumibles();
+        await this.buscarCodigo(event);
     }
 
     async buscarConsumible(event) {

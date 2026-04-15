@@ -18,7 +18,7 @@ class Material(http.Controller):
             # Se filtra el material no revisado por almacén
             get_materiales_filtros = get_materiales.filtered(lambda r:r.materials_cuantity >= r.materials_availabe and r.materials_required > 0 and not r.almacen  and r.model_id.firma_ventas)
             if get_materiales_filtros:
-                # Se filtra para obtener el apartado tomando en cuenta los items que no se han estregado
+                # Se filtra para obtener el apartado tomando en cuenta los items que no se han entregado
                 get_apartado = get_materiales.filtered(lambda r: r.materials_required > 0  and r.model_id.firma_ventas)
                 # Se obtienen los datos del material del almacén
                 stock = get_materiales[0].materials_list.cantidad
@@ -26,7 +26,6 @@ class Material(http.Controller):
                 nombre = get_materiales[0].materials_list.nombre
                 medida = get_materiales[0].materials_list.medida
                 cantidad = sum(get_materiales_filtros.mapped('materials_cuantity'))
-                # entregado = sum(get_materiales_filtros.mapped('materials_availabe'))
                 get_requerido = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}")])
                 get_realizado = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('nombre','=',f"{nombre} {medida}"),('comprado','not in',["Recibido","Parcial"])])
                 en_compras = sum(get_realizado.mapped('cantidad')) + sum(get_requerido.mapped('cantidad'))
@@ -59,6 +58,8 @@ class Material(http.Controller):
         data = json.loads(raw)
         codigo = data.get('codigo')
         nombre = data.get('descripcion')
+        comprar = data.get('comprar')
+        stock = data.get('stock')
         lamina_list = ["120.0 x 48.0", "96.0 x 48.0", "96.0 x 36.0", "60.0 x 48.0", ",236.0", "120.0 x 72.0"]
         perfileria_list  = ["Perfil", "Tubo", "P.T.R.","Ángulos","Canales","I.P.R","Varilla","Viga"]
         permiso = True
@@ -67,6 +68,20 @@ class Material(http.Controller):
 
         if True in [perfileria in nombre for perfileria in perfileria_list]:
             permiso = "236.0" in nombre
+
+        # Vamos a actualizar el stock en las ordenes que están solicitando material o sea que materials_require sea diferente de cero
+        get_materials_require = request.env['dtm.materials.line'].sudo().search(
+            [('materials_list', '=', codigo),('materials_required', '>', 0),('almacen','!=',True)])
+        [material.write({'materials_availabe': 0}) for material in get_materials_require]
+        cantidadStock = int(stock)
+        for material in get_materials_require:
+                if cantidadStock >= material.materials_required:
+                    cantidadStock -= material.materials_required
+                    material.write({'materials_availabe': material.materials_required, 'materials_required': 0})
+                else:
+                    material.write(
+                        {'materials_availabe': cantidadStock, 'materials_required': material.materials_cuantity - cantidadStock})
+                    break
         # Se buscan la ordenes que ya está en cotización para restarlo de las nuevas solicitudes y no mutar en la cantidad
         get_cotizacion = request.env['dtm.compras.requerido'].sudo().search([('codigo','=',codigo),('nombre','=',nombre)])
         # cantidad_cotizacion = sum(get_cotizacion.mapped('cantidad'))
@@ -74,7 +89,6 @@ class Material(http.Controller):
         get_compras = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('nombre','=',nombre),('comprado','!=','Recibido')])
         # cantidad_compras = sum(get_compras.mapped('cantidad'))
         # en_compras = cantidad_compras + cantidad_cotizacion
-        comprar = max(data.get('comprar'),0) # Cantidad a comprar
 
         # Se buscan las ordenes que no están en compras
         list_compras = get_cotizacion.mapped('orden_trabajo') # Se obtienen las ordenes de compras realizado (cotización)
@@ -93,9 +107,16 @@ class Material(http.Controller):
         # Se agregan las odenes a requerido para el control de solicitudes
         for orden in ordenes_faltantes_lts:
             orden_id = request.env['dtm.odt'].sudo().search([('ot_number','=',orden)])# Se obtiene el id de la orden para filtrar
-            record = request.env['dtm.materials.line'].sudo().search([('model_id','=',orden_id.id),('materials_list','=',codigo)])# Con el id de la orden y el código podemos obtener el item requerido
+            record = request.env['dtm.materials.line'].sudo().search([('model_id','=',orden_id.id),('materials_list','=',codigo)],limit=1)# Con el id de la orden y el código podemos obtener el item requerido
             get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',orden),('tipo_orden','in',['OT','NPI']),('codigo','=',codigo)])
-            cantidad = record.materials_cuantity if comprar >= record.materials_cuantity else comprar
+            cantidad = 0
+            if comprar >= record.materials_required:
+                cantidad = record.materials_required
+                comprar = max(comprar - record.materials_required,0)
+            else:
+                cantidad = comprar
+                break
+            # cantidad = record.materials_cuantity if comprar >= record.materials_cuantity else comprar
             # comprar = max(comprar - record.materials_cuantity,0)
             if record.materials_required > 0 and cantidad > 0 and permiso:
                 vals = {
@@ -445,3 +466,13 @@ class Material(http.Controller):
         get_control.unlink() if get_control else None
 
         return {'Borrado':'Borrado'}
+
+    @http.route('/update_stock', type='json', auth='public', csrf=False)
+    def update_stock(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        codigo = data.get('codigo')
+        stock = data.get('stock')
+        get_material = request.env['dtm.materiales'].sudo().search([('id','=',codigo)],limit=1)
+        get_material.write({'cantidad':int(stock)})
+        return {'codigo':codigo}
