@@ -8,6 +8,7 @@
     "depends":['base',"dtm_diseno"],
     "data":[
         #Security
+        'security/res_groups.xml',
         'security/ir.model.access.csv',
 
         #Views

@@ -1,12 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-     <menuitem name="Almacén" id="menu_root_dtm_almacen">
-        <menuitem id="dtm_almacen_seguimiento_menu" action="dtm_almacen_seguimiento_action"/>
-        <menuitem id="dtm_almacen_transito_menu" action="dtm_almacen_transito_action"/>
-        <menuitem id="dtm_almacen_salidas_menu" action="dtm_almacen_salidas_action"/>
-        <menuitem id="dtm_almacen_menu" action="dtm_almacen_accion" />
-        <menuitem id="dtm_almacen_salidas_view_menu" action="dtm_almacen_salidas_view_action" />
-        <menuitem id="dtm_almacen_consumibles_menu" action="dtm_almacen_consumible_action"/>
-        <menuitem id="dtm_consumibles_historial_menu" action="dtm_diseno.dtm_consumibles_historial_act_window"/>
-     </menuitem>
+    <menuitem name="Almacén" id="menu_root_dtm_almacen">
+        <!-- Visible para ambos grupos -->
+        <menuitem id="dtm_almacen_pedaceria"
+                  action="dtm_almacen_accion"
+                  groups="group_dtm_almacen_admin,group_dtm_almacen_user"
+                  sequence="1"/>
+
+        <!-- Solo admin -->
+        <menuitem id="dtm_almacen_revision"
+                  action="dtm_almacen_seguimiento_action"
+                  groups="group_dtm_almacen_admin"
+                  sequence="2"/>
+        <menuitem id="dtm_almacen_transito"
+                  action="dtm_almacen_transito_action"
+                  groups="group_dtm_almacen_admin"
+                  sequence="3"/>
+        <menuitem id="dtm_almacen_salidas"
+                  action="dtm_almacen_salidas_action"
+                  groups="group_dtm_almacen_admin"
+                  sequence="4"/>
+        <menuitem id="dtm_almacen_salidas_historial"
+                  action="dtm_almacen_salidas_view_action"
+                  groups="group_dtm_almacen_admin"
+                  sequence="5"/>
+        <menuitem id="dtm_almacen_consumibles"
+                  action="dtm_almacen_consumible_action"
+                  groups="group_dtm_almacen_admin"
+                  sequence="6"/>
+        <menuitem id="dtm_consumibles_historial_menu"
+                  action="dtm_diseno.dtm_consumibles_historial_act_window"
+                  groups="group_dtm_almacen_admin"
+                  sequence="7"/>
+    </menuitem>
 </odoo>
