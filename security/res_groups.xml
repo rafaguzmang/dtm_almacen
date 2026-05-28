@@ -1,0 +1,16 @@
+<odoo>
+    <record id="module_category_dtm_almacen" model="ir.module.category">
+        <field name="name">Almacen</field>
+        <field name="description">Ayuda para administrar permisos de almacén</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="group_dtm_almacen_admin" model="res.groups">
+        <field name="name">Almacen Administrador</field>
+        <field name="category_id" ref="module_category_dtm_almacen"/>
+        
+    </record>
+    <record id="group_dtm_almacen_user" model="res.groups">
+        <field name="name">Almacen Usuario</field>
+        <field name="category_id" ref="module_category_dtm_almacen"/>
+    </record>
+</odoo>

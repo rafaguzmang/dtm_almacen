@@ -1,0 +1,40 @@
+<templates xml:space="preserve">
+    <t t-name="dtm_almacen.orden_revision" owl="1">
+        
+
+
+        <div class="or-demo">
+            <div class="or-grid">
+                <t t-foreach="state.ordenes" t-as="orden" t-key="orden.id">
+                    <article class="or-card" data-status="pendiente">
+                        <div class="or-card-head">
+                            <div class="or-card-id"><span t-esc="orden.tipo_orden"></span><t t-esc="orden.ot"/></div>
+                            <div class="or-stat">
+                                <span class="or-stat-num"><t t-esc="orden.total"/></span>                            
+                        </div>
+                        </div>
+                        <div class="or-client"><t t-esc="orden.cliente"/></div>
+                        <div class="or-project"><t t-esc="orden.proyecto"/></div>
+                        <div class="or-meta">
+                            <span class="or-meta-item">
+                                <i class="ti ti-calendar" aria-hidden="true" style="font-size:11px"></i><t t-esc="orden.fecha"></t>
+                            </span>                      
+                        </div>                                      
+                        <!-- <textarea class="or-notes" onclick="event.stopPropagation()" placeholder="Notas del almacenista...">Revisar láminas en bodega B2.</textarea> -->
+                        <div class="or-footer">
+                            <button class="or-open-btn" t-on-click="()=>this.materialesDialogo(orden.materials, orden.ot, orden.proyecto, orden.cliente, orden.tipo_orden)">Ver materiales <i class="ti ti-arrow-right" aria-hidden="true" style="font-size:11px"></i></button>
+                        </div>
+                    </article>
+
+               
+                </t>
+        </div>
+
+        <t t-if="state.dialogoAbierto">
+            <MaterialesRevDialogo materiales="state.materiales" cerrar="this.cerrar" orden="state.orden" proyecto="state.proyecto" cliente="state.cliente" tipo_orden="state.tipo_orden" ordenes="this.ordenes"/>
+        </t>
+</div>
+
+  
+    </t>
+</templates>

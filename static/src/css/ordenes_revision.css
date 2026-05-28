@@ -1,0 +1,255 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0
+}
+
+.or-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    max-width: 100%;
+    padding: 16px;
+    background: #f5f5f0;
+}
+
+.or-card {
+    background: #ffffff;
+    border: 1px solid #e2e0d8;
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+
+.or-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+}
+
+.or-card[data-status="pendiente"]::before {
+    background: #EF9F27
+}
+
+.or-card[data-status="parcial"]::before {
+    background: #378ADD
+}
+
+.or-card[data-status="completo"]::before {
+    background: #639922
+}
+
+.or-card:hover {
+    border-color: #b0aca0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.or-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.or-card-id {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.or-card-id span {
+    font-size: 10px;
+    color: #999;
+    margin-right: 3px;
+    font-weight: 400;
+}
+
+.or-badge {
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.or-badge-pendiente {
+    background: #FAEEDA;
+    color: #854F0B
+}
+
+.or-badge-parcial {
+    background: #E6F1FB;
+    color: #185FA5
+}
+
+.or-badge-completo {
+    background: #EAF3DE;
+    color: #3B6D11
+}
+
+.or-client {
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-weight: 500;
+}
+
+.or-project {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+
+.or-meta {
+    display: flex;
+    gap: 10px;
+}
+
+.or-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #999;
+}
+
+.or-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 9px 8px;
+    background: #f7f6f2;
+    border-radius: 6px;
+    border: 1px solid #e2e0d8;
+}
+
+.or-stat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1px;
+}
+
+.or-stat-num {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.or-stat-lbl {
+    font-size: 9px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.or-stat-ok .or-stat-num {
+    color: #3B6D11
+}
+
+.or-stat-warn .or-stat-num {
+    color: #854F0B
+}
+
+.or-stat-info .or-stat-num {
+    color: #185FA5
+}
+
+.or-progress-bar {
+    flex: 1;
+    height: 3px;
+    background: #e2e0d8;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.or-progress-fill {
+    height: 100%;
+    background: #EF9F27;
+    border-radius: 2px;
+}
+
+.or-progress-pct {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #666;
+    min-width: 28px;
+    text-align: right;
+}
+
+.or-notes {
+    width: 100%;
+    min-height: 44px;
+    max-height: 72px;
+    background: #f7f6f2;
+    border: 1px solid #e2e0d8;
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #555;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+}
+
+.or-notes::placeholder {
+    color: #bbb
+}
+
+.or-notes:focus {
+    border-color: #b0aca0
+}
+
+.or-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid #e2e0d8;
+}
+
+.or-color-tag {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #999;
+}
+
+.or-open-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: #854F0B;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    transition: gap .15s, color .15s;
+}
+
+.or-open-btn:hover {
+    gap: 8px;
+    color: #BA7517;
+}

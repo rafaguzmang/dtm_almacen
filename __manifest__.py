@@ -1,4 +1,3 @@
-        #Views
 {
     "name":"Almacén",
 
@@ -28,18 +27,24 @@
         'dtm_almacen/static/src/css/consumibles.css',
         'dtm_almacen/static/src/css/salidas.css',
         'dtm_almacen/static/src/css/revision.css',
+        'dtm_almacen/static/src/css/ordenes_revision.css',
+        'dtm_almacen/static/src/css/materiales_rev_dialogo.css', 
         # JS
         'dtm_almacen/static/src/js/revision.js',
         'dtm_almacen/static/src/js/transito.js',
         'dtm_almacen/static/src/js/salidas.js',
         'dtm_almacen/static/src/js/consumibles.js',
+        'dtm_almacen/static/src/js/ordenes_revision.js',
         'dtm_almacen/static/src/js/dialog/lamina_dialog.js',
+        'dtm_almacen/static/src/js/dialog/materiales_rev_dialogo.js',
         # XML
         'dtm_almacen/static/src/xml/revision.xml',
         'dtm_almacen/static/src/xml/transito.xml',
         'dtm_almacen/static/src/xml/salidas.xml',
         'dtm_almacen/static/src/xml/consumibles.xml',
+        'dtm_almacen/static/src/xml/ordenes_revision.xml',
         'dtm_almacen/static/src/xml/dialog/lamina_dialog.xml',
+        'dtm_almacen/static/src/xml/dialog/materiales_rev_dialogo.xml',
         ],
     },
 }
