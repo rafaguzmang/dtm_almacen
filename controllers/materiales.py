@@ -2,6 +2,7 @@ from odoo import http
 from odoo.http import request
 import datetime
 import json
+from collections import Counter
 
 class Material(http.Controller):
     # Se obtiene el total del material indirecto requerido por las ordenes GET
@@ -138,44 +139,32 @@ class Material(http.Controller):
     @http.route('/material_transito', type='http', auth='public', csrf=False)
     def transito(self):
         get_transito = request.env['dtm.compras.realizado'].sudo().search([('listo_btn','=','True'),('comprado','!=','Recibido')])
-        list_set = list(set(get_transito.mapped('codigo')))
         result = []
-        for codigo in list_set:
-            get_transito = request.env['dtm.compras.realizado'].sudo().search([('codigo','=',codigo),('listo_btn','=','True'),('comprado','!=','Recibido')])
-            # print(get_transito.mapped('proveedor'),len(list(set(get_transito.mapped('proveedor')))))
-            # Se hace el cálculo cuando la cotización es con un mismo proveedor
-            if len(list(set(get_transito.mapped('proveedor')))) == 1 and len(list(set([str(c)for c in get_transito.mapped('fecha_compra')]))) ==1 and len(list(set([str(c)for c in get_transito.mapped('orden_compra')]))) ==1:
+        for codigo in get_transito:           
                 # print(sum(get_transito.mapped('cantidad_almacen')))
+                proyecto = request.env['dtm.odt'].sudo().search([('ot_number','=',codigo.orden_trabajo)],limit=1).product_name
                 vals = {
-                    'proveedor':get_transito[0].proveedor,
-                    'orden_compra':get_transito[0].orden_compra,
-                    'codigo':get_transito[0].codigo,
-                    'descripcion':get_transito[0].nombre,
-                    'fecha':get_transito[0].fecha_recepcion,
-                    'fecha_creacion':get_transito[0].create_date.strftime('%Y-%m-%d'),
-                    'solicitado':sum(get_transito.mapped('cantidad')),
-                    'recibido':max(sum(get_transito.mapped('cantidad_almacen')),0),
-                    'factura':get_transito[0].factura if get_transito[0].factura else '',
-                    'notas':get_transito[0].notas_almacen if get_transito[0].notas_almacen else ''
+                    'proveedor':codigo.proveedor,
+                    'orden_compra':codigo.orden_compra,
+                    'codigo':codigo.codigo,
+                    'descripcion':codigo.nombre,
+                    'fecha':codigo.fecha_recepcion,
+                    'fecha_creacion':codigo.create_date.strftime('%Y-%m-%d'),
+                    'solicitado':codigo.cantidad,
+                    'recibido':codigo.cantidad_almacen,
+                    'factura':codigo.factura if codigo.factura else '',
+                    'notas':codigo.notas_almacen if codigo.notas_almacen else '',
+                    'orden_trabajo':codigo.orden_trabajo,  
+                    'proyecto': proyecto if proyecto else 'DTM'
                 }
                 result.append(vals)
-            # El cálculo se hace cuando hay vario proveedores
-            else:
-                for orden_compra in list(set(get_transito.mapped('orden_compra'))):
-                    data = get_transito.filtered_domain([('orden_compra','=',orden_compra)])
-                    vals = {
-                        'proveedor': data[0].proveedor,
-                        'orden_compra':data[0].orden_compra,
-                        'codigo': data[0].codigo,
-                        'descripcion': data[0].nombre,
-                        'fecha': data[0].fecha_recepcion,
-                        'fecha_creacion': data[0].create_date.strftime('%Y-%m-%d'),
-                        'solicitado': sum(data.mapped('cantidad')),
-                        'recibido': max(data[0].cantidad_almacen,0),
-                        'factura': data[0].factura,
-                        'notas': data[0].notas_almacen
-                    }
-                    result.append(vals)
+        result = list(result)
+        conteo = Counter((m['proveedor'],m['descripcion']) for m in result)
+        for m in result:
+            clave = (m['proveedor'],m['descripcion'])
+            m['duplicado'] = conteo[clave]>1
+
+
         return request.make_response(
             json.dumps(result),
             headers={
@@ -194,43 +183,23 @@ class Material(http.Controller):
         proveedor = data.get('proveedor')
         descripcion = data.get('descripcion')
         cantidad = int(data.get('cantidad'))
-        orden_compra = data.get('orden_compra')
+        orden_trabajo = data.get('orden_trabajo')
         factura = data.get('factura')
         # Se buscan todas las ordenes que se hayan comprado con el mismo proveedor y código
         get_comprado = request.env['dtm.compras.realizado'].sudo().search([
             ('comprado','!=','Recibido'),
-            ('codigo','=',codigo),
+            ('codigo','=',int(codigo)),
             ('proveedor','=',proveedor),
-            ('nombre','=',descripcion),
-            ('orden_compra','=',orden_compra),
-            ('orden_compra','=',orden_compra),
-            ('listo_btn', '=', 'True'),
-        ])
-        # Reparte la cantidad ingresada en los diferentes posibles ordenes (diseño)
-        for orden in get_comprado:
-            # Se obtiene el número de orden
-            get_odt = request.env['dtm.odt'].search(
-                [('ot_number', '=', orden.orden_trabajo), ('revision_ot', '=', orden.revision_ot)], limit=1)
-            # Se obtiene el item relacionado con la orden
-            get_item =  get_odt.materials_ids.filtered_domain([('materials_list', '=', codigo)])
-            if cantidad > orden.cantidad:# Si la cantidad cubre lo solicitado se iguala lo pedido a lo entregado
-                orden.write({'cantidad_almacen':orden.cantidad})
-                get_item.write({'materials_availabe': orden.cantidad,
-                                'materials_required': 0
-                                })
-                cantidad -= orden.cantidad
-            else:# Si la cantidad es igual o menor se entrega la cantidad y se detiene la iteración
-                orden.write({'cantidad_almacen':orden.cantidad_almacen + cantidad})
-                get_item.write({'materials_availabe':get_item.materials_availabe + cantidad,
-                                'materials_required': get_item.materials_required - cantidad
-                                })
-                break
+            ('orden_trabajo','=',orden_trabajo),
+            ('listo_btn', '=', 'True')
+        ],limit=1)    
 
-        if get_comprado[0].tipo_orden in ['OT','NPI']:
-            get_indirecto = request.env['dtm.materiales'].sudo().browse(codigo)
-            get_indirecto.write({'cantidad':max(get_indirecto.cantidad + int(data.get('cantidad')),0)})
+        get_material = request.env['dtm.materials.line'].sudo().search([('model_id.ot_number','=',orden_trabajo),('materials_list','=',codigo)],limit=1)    
+        if get_material:
+            get_material.write({'materials_availabe':get_material.materials_availabe + cantidad,
+                                'materials_required':get_material.materials_cuantity - cantidad})
 
-        if get_comprado[0].tipo_orden in ['Requi']:
+        if get_comprado.tipo_orden in ['Requi']:
             get_directo = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)])
             if get_directo:
                 get_directo.write({'cantidad':get_directo.cantidad + int(data.get('cantidad'))})
@@ -239,31 +208,23 @@ class Material(http.Controller):
                 if get_herramientas:
                     get_herramientas.write({'cantidad':max(get_herramientas.cantidad + int(cantidad),0)})
         # Se revisa si la cantidad ingresada por almacén es igual a la cantidad comprada para darlo como recibido total
-        get_comprado = request.env['dtm.compras.realizado'].sudo().search([
-            ('comprado', '!=', 'Recibido'),
-            ('codigo', '=', codigo),
-            ('proveedor', '=', proveedor),
-            ('nombre', '=', descripcion),
-            ('orden_compra', '=', orden_compra),
-            ('listo_btn', '=', 'True'),
-        ])
-        ingresado = sum(get_comprado.mapped('cantidad_almacen'))
-        total = sum(get_comprado.mapped('cantidad'))
 
         vals = {
             "cantidad":int(data.get('cantidad')),
-            "cantidad_real":sum(get_comprado.mapped('cantidad_almacen')),
+            "cantidad_real":cantidad,
             "proveedor":proveedor,
             "codigo":codigo,
             "descripcion":descripcion,
             "fecha_real":datetime.datetime.now(),
             "factura":factura,
-            "notas":data.get('notas')
+            "notas":data.get('notas'),
+            "orden_trabajo":orden_trabajo
         }
         request.env['dtm.control.recibido'].sudo().create(vals)
-        if ingresado == total:
-            # print('Recibido')
-            get_comprado.write({'comprado':'Recibido'})
+        if (cantidad + get_comprado.cantidad_almacen) == get_comprado.cantidad:
+            get_comprado.write({'comprado':'Recibido','cantidad_almacen':cantidad})
+        else:
+            get_comprado.write({'cantidad_almacen':get_comprado.cantidad_almacen + cantidad})
         
         return data
 

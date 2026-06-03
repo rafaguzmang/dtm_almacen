@@ -7,7 +7,6 @@ class Ordenes(http.Controller):
     @http.route('/almacen_ordenes_revision', type='http', auth='public', csrf=False)
     def ordenRevision(self):
         ordenes = request.env['dtm.odt'].sudo().search([('materials_ids.almacen', '!=', True)])
-        print(ordenes)
         result = []
         for orden in ordenes:
 
@@ -62,7 +61,10 @@ class Ordenes(http.Controller):
 
     @http.route('/almacen_mandar_comprar', type='json', auth='public')
     def almacen_mandar_comprar(self):
-        medidas_validas = ["120.0 x 48.0", "96.0 x 48.0", "120.0 x 36.0", "96.0 x 36.0", "60.0 x 48.0","12.0 x 12.0"]
+        medidas_validas = ["240.0 x 96.0","120.0 x 48.0", "96.0 x 48.0", "120.0 x 36.0", "96.0 x 36.0", "60.0 x 48.0","12.0 x 12.0"]
+        lista_perfil = ["Perfil", "Tubo", "Canal", "Ángulo", "I.P.R", "Solera","Varilla"]
+        medida_perfiles = [",236.0"]
+
         raw = request.httprequest.data
         data = json.loads(raw)
         materiales = data.get('materiales')
@@ -79,7 +81,7 @@ class Ordenes(http.Controller):
                 if nombre.startswith("Lámina") and not any(validas in medida for validas in medidas_validas):
                     continue
                 # Descarta perfilería que no mida 6 metros
-                if ",236.0" not in medida and not nombre.startswith("Lámina"):
+                if any(perfil in nombre for perfil in lista_perfil) and not any(medida in medida for medida in medida_perfiles):
                     continue
                 get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',str(item.model_id.ot_number)),('codigo','=',item.materials_list.id)],limit=1)                
                 vals = {
@@ -87,7 +89,7 @@ class Ordenes(http.Controller):
                         'tipo_orden':item.model_id.tipe_order,
                         'revision_ot':item.model_id.revision_ot,
                         'codigo':item.materials_list.id,
-                        'nombre':item.materials_list.nombre,
+                        'nombre':f"{item.materials_list.nombre} {item.materials_list.medida}",
                         'cantidad':item.materials_required,
                         'disenador':item.model_id.disenador,
                         'nesteo':item.model_id.firma_ingenieria,

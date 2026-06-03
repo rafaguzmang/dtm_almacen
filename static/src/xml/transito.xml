@@ -6,7 +6,7 @@
         <thead style="width: 100%;">
             <tr style="width: 100%;">
               <th>Proveedor</th>
-              <th>Orden de Compra</th>
+              <th>Orden de Trabajo</th>
               <th>Codigo</th>
               <th>Descripción</th>
               <th>Solicitado</th>
@@ -18,11 +18,11 @@
         </thead>
         <tbody>
             <t t-foreach="state.entradas" t-as="entrada" t-key="entrada.num">
-                <tr>
+                <tr t-att-title="entrada.proyecto" >
                     <td><t t-esc="entrada.proveedor" /></td>
-                    <td name="orden_compra"><t t-esc="entrada.orden_compra" /></td>
+                    <td name="orden_compra"><t t-esc="entrada.orden_trabajo" /></td>
                     <td><t t-esc="entrada.codigo" /></td>
-                    <td><t t-esc="entrada.descripcion" /></td>
+                    <td t-att-style="entrada.duplicado ? 'color:#ff9800' : ''"><t t-esc="entrada.descripcion" /></td>
                     <td name="solicitado"><t t-esc="entrada.solicitado" /></td>
                     <td name="recibido"><t t-esc="entrada.recibido" /></td>
                     <td style="width:5%"><!-- Cantidad agregada por almacén -->

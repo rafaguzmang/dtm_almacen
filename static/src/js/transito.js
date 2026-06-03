@@ -2,11 +2,11 @@
 import { Component, onWillStart, useState, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 
-export class Transito extends Component{
-    setup(){
+export class Transito extends Component {
+    setup() {
 
         this.state = useState({
-            entradas:[]
+            entradas: []
         })
         let interval = null;
 
@@ -15,106 +15,106 @@ export class Transito extends Component{
         })
 
         onMounted(() => {
-            interval = setInterval(()=>{
-               this.cargarTransito();
-            },10000)
+            interval = setInterval(() => {
+                this.cargarTransito();
+            }, 10000)
         })
         onWillUnmount(() => {
             clearInterval(interval)
         })
     }
 
-    async cargarTransito(){
-            const response = await fetch("/material_transito");
-            const data = await response.json(); 
-            let num = 0;
-            this.state.entradas = data.map(row => ({num:num++,...row}))
+    async cargarTransito() {
+        const response = await fetch("/material_transito");
+        const data = await response.json();
+        const sortedData = data.sort((a, b) => (a.descripcion).localeCompare(b.descripcion));
+        let num = 0;
+        this.state.entradas = sortedData.map(row => ({ num: num++, ...row }))
     }
-    async cantidadIngresada(ev,proveedor,codigo,descripcion,solicitado,recibido){
+    async cantidadIngresada(ev, proveedor, codigo, descripcion, solicitado, recibido) {
         const cantidad = ev.target.value;
         const factura = ev.target.closest('tr').querySelector('[name=factura]').value;
         const notas = ev.target.closest('tr').querySelector('[name=notas]').value;
-        const orden_compra = ev.target.closest('tr').querySelector('[name=orden_compra]').innerText;
-        console.log(solicitado,recibido,recibido + parseInt(cantidad))
-        if((recibido + parseInt(cantidad)) > solicitado){
+        const orden_trabajo = ev.target.closest('tr').querySelector('[name=orden_compra]').innerText;
+        console.log(codigo, orden_trabajo)
+        if ((recibido + parseInt(cantidad)) > solicitado) {
             alert("La cantidad ingresada supera la cantidad solicitada")
         }
-        else{
-            try{
-                if(factura){
-                    const response = await fetch('/transito_lectura',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                            cantidad:cantidad,
-                            proveedor:proveedor,
-                            orden_compra:orden_compra,
-                            codigo:codigo,
-                            descripcion:descripcion,
-                            solicitado:solicitado,
-                            recibido:recibido,
-                            factura:factura,
-                            notas:notas
+        else {
+            try {
+                if (factura) {
+                    const response = await fetch('/transito_lectura', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            cantidad: cantidad,
+                            proveedor: proveedor,
+                            orden_trabajo: orden_trabajo,
+                            codigo: codigo,
+                            descripcion: descripcion,
+                            solicitado: solicitado,
+                            recibido: recibido,
+                            factura: factura,
+                            notas: notas
                         })
                     })
                 }
-                else{
+                else {
                     alert("Es necesario número de Factura.");
                 }
-
                 ev.target.value = 0;
                 this.cargarTransito();
-            }catch (error){
-            console.log(error)
-        }
+            } catch (error) {
+                console.log(error)
+            }
         }
 
     }
-    async factura(ev,proveedor,codigo,descripcion,orden_compra){
+    async factura(ev, proveedor, codigo, descripcion, orden_compra) {
         clearInterval(this.interval);
-        try{
-            const response = await fetch('/transito_factura',{
-                method:'POST',
-                headers:{
+        try {
+            const response = await fetch('/transito_factura', {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
                 body: JSON.stringify({
-                    factura:ev.target.value,
-                    orden_compra:orden_compra,
-                    proveedor:proveedor,
-                    codigo:codigo,
-                    descripcion:descripcion,
+                    factura: ev.target.value,
+                    orden_compra: orden_compra,
+                    proveedor: proveedor,
+                    codigo: codigo,
+                    descripcion: descripcion,
                 })
             })
         }
-        catch (error){
+        catch (error) {
             console.log(error)
         }
     }
-    async notas(ev,proveedor,codigo,descripcion){
+    async notas(ev, proveedor, codigo, descripcion) {
         clearInterval(this.interval);
-        try{
-            const response = await fetch('/transito_notas',{
-                method:'POST',
-                headers:{
+        try {
+            const response = await fetch('/transito_notas', {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
                 body: JSON.stringify({
-                    notas:ev.target.value,    
-                    proveedor:proveedor,
-                    codigo:codigo,
-                    descripcion:descripcion,
+                    notas: ev.target.value,
+                    proveedor: proveedor,
+                    codigo: codigo,
+                    descripcion: descripcion,
                 })
             })
-          
+
 
         }
-        catch (error){
+        catch (error) {
             console.log(error)
         }
     }
