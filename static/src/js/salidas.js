@@ -1,176 +1,175 @@
 /** @odoo-module **/
 import { Component, useState, onWillStart, onMounted } from "@odoo/owl";
 import { registry } from "@web/core/registry";
-import { LaminaDialogo }  from "./dialog/lamina_dialog";
+import { LaminaDialogo } from "./dialog/lamina_dialog";
 
-export class Salidas extends Component{
-    static components = {LaminaDialogo};
-    setup(){
+export class Salidas extends Component {
+    static components = { LaminaDialogo };
+    setup() {
         this.state = useState({
-            materiales:[],
-            personal:[],
-            filtro:[],
-            laminas:false,
-            laminasDialog:false,
+            materiales: [],
+            personal: [],
+            filtro: [],
+            laminas: false,
+            laminasDialog: false,
         })
         let interval = null;
 
         onWillStart(async () => {
             await this.cargarMaterial();
-            await this.cargarPersonal(); 
-            await this.materialCortado();           
-        })   
-        
+            await this.cargarPersonal();
+            await this.materialCortado();
+        })
+
         onMounted(() => {
-            interval = setInterval(()=>{
-               this.materialCortado();
-            },10000)
+            interval = setInterval(() => {
+                this.materialCortado();
+            }, 10000)
         });
 
     }
 
-    async materialCortado(){
+    async materialCortado() {
         const response = await fetch("material_cortado");
-        const data = await response.json();      
-        console.log(data); 
-        this.state.laminas = data.length>0?true:false;       
+        const data = await response.json();
+        this.state.laminas = data.length > 0 ? true : false;
     }
 
-    async cargarMaterial(){
-            const response = await fetch("/leer_material");
-            const data = await response.json();
-            this.state.materiales = data;
-            this.state.filtro = data;
+    async cargarMaterial() {
+        const response = await fetch("/leer_material");
+        const data = await response.json();
+        this.state.materiales = data;
+        this.state.filtro = data;
     }
 
-    async cargarPersonal(){
+    async cargarPersonal() {
         const response = await fetch("/leer_personal");
         const data = await response.json();
         this.state.personal = data;
         // console.log(this.state.personal)
     }
 
-    async cantidadSalida(event){
-//      datos pata ingresar cantidad
+    async cantidadSalida(event) {
+        //      datos pata ingresar cantidad
         const cantidad = event.target.value;
         const codigo = event.target.closest('tr').querySelector('[name=codigo_material]').innerText;
         const select = event.target.closest('tr').querySelector('[name=lista_personal]');
-        const responsable = select?.options[select.selectedIndex]?.text ?? '';        
-        if(responsable==='--Seleccione--'){
+        const responsable = select?.options[select.selectedIndex]?.text ?? '';
+        if (responsable === '--Seleccione--') {
             alert('Seleccione un responsable para la salida de material');
             event.target.value = 0;
             return;
-        }else if(cantidad<=0){
+        } else if (cantidad <= 0) {
             alert('Ingrese una cantidad válida para la salida de material');
-            return;         
-        }else{  
+            return;
+        } else {
             const response = await fetch("/salida_material", {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
-                    
+
                 },
                 body: JSON.stringify(
                     {
                         'cantidad': cantidad,
                         'codigo': codigo,
                         'responsable': responsable,
-                    }),           
+                    }),
             });
-            const data = await response.json();        
+            const data = await response.json();
             console.log(data.result);
             this.cargarMaterial();
         }
-        
+
     }
 
     // Actualizar stock al cambiar el valor en el input
-    async actualizarStock(event){
-        const cantidad = event.target.value;               
+    async actualizarStock(event) {
+        const cantidad = event.target.value;
         const codigo = event.target.closest('tr').querySelector('[name=codigo_material]').innerText;
-        console.log(cantidad,codigo);
+        console.log(cantidad, codigo);
         const response = await fetch("/modificar_stock", {
             method: "POST",
-            headers: { 
+            headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 'cantidad': cantidad,
                 'codigo': codigo,
-            }), 
-        })    
-        const data = await response.json();        
-        console.log(data.result);  
+            }),
+        })
+        const data = await response.json();
+        console.log(data.result);
         this.cargarMaterial();
     }
     // Función para mostrar las láminas cortadas
-    laminasFunc(){
+    laminasFunc() {
         this.state.laminasDialog = true;
     }
 
-    laminasFuncClose = () =>{
+    laminasFuncClose = () => {
         this.state.laminasDialog = false;
     }
 
     // -----------------------------------Funciones de filtro-------------------------
     // Función para filtrar por código
-    codigoFiltro(event){
+    codigoFiltro(event) {
         const codigo = event.target.value;
         // Se borran los otros filtros
-            // nombre
+        // nombre
         event.target.closest('tr').querySelector('[name=nombre_filtro]').value = '';
-            // medida
+        // medida
         event.target.closest('tr').querySelector('[name=medida_filtro]').value = '';
-            // stock
+        // stock
         const resultado = this.state.filtro.filter(material => material.codigo === parseInt(codigo));
-        this.state.materiales = resultado; 
+        this.state.materiales = resultado;
 
     }
     // Recibe el filtro de nombre
-    nombreFiltro(event){
+    nombreFiltro(event) {
         // Se borra el filtro de código
         event.target.closest('tr').querySelector('[name=codigo_filtro]').value = '';
         // Se obtiene el valor del filtro de medida        
-        const medida = (event.target.closest('tr').querySelector('[name=medida_filtro]').value??'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina los diacríticos
-        const stock = event.target.closest('tr').querySelector('[name=stock_filtro]').value??'';
+        const medida = (event.target.closest('tr').querySelector('[name=medida_filtro]').value ?? '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina los diacríticos
+        const stock = event.target.closest('tr').querySelector('[name=stock_filtro]').value ?? '';
         const nombre = event.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        this.filtro(nombre, medida, stock);          
-    } 
+        this.filtro(nombre, medida, stock);
+    }
     // Recibe el filtro de medida
-    medidaFiltro(event){
+    medidaFiltro(event) {
         // Se borra el filtro de código
         event.target.closest('tr').querySelector('[name=codigo_filtro]').value = '';
         // Se obtiene el valor del filtro de medida y stock        
-        let nombre = (event.target.closest('tr').querySelector('[name=nombre_filtro]').value??'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");  
-        const stock = event.target.closest('tr').querySelector('[name=stock_filtro]').value??'';
+        let nombre = (event.target.closest('tr').querySelector('[name=nombre_filtro]').value ?? '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const stock = event.target.closest('tr').querySelector('[name=stock_filtro]').value ?? '';
         const medida = event.target.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina los diacríticos
         this.filtro(nombre, medida, stock);
-    } 
+    }
     // Recibe el filtro de stock
-    stockFiltro(event){
-        const optionselect = event.target.value;   
-        const nombre = (event.target.closest('tr').querySelector('[name=nombre_filtro]').value??'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");  
-        const medida = (event.target.closest('tr').querySelector('[name=medida_filtro]').value??'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina los diacríticos        
-        this.filtro(nombre, medida, optionselect);        
+    stockFiltro(event) {
+        const optionselect = event.target.value;
+        const nombre = (event.target.closest('tr').querySelector('[name=nombre_filtro]').value ?? '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const medida = (event.target.closest('tr').querySelector('[name=medida_filtro]').value ?? '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // elimina los diacríticos        
+        this.filtro(nombre, medida, optionselect);
     }
     // Función común para filtrar
-    filtro(nombre, medida, stock){
+    filtro(nombre, medida, stock) {
         let resultado = this.state.filtro.filter(material => String(material.nombre || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(nombre));
         resultado = resultado.filter(material => String(material.medida || "").includes(medida));
-        if(stock==='sin_stock'){
+        if (stock === 'sin_stock') {
             resultado = resultado.filter(material => material.cantidad <= 0);
-        }else if(stock==='con_stock'){
+        } else if (stock === 'con_stock') {
             resultado = resultado.filter(material => material.cantidad > 0);
-        }else{
+        } else {
             resultado = resultado;
-        }        
+        }
         this.state.materiales = resultado;
         // Restablece los filtros si están vacíos
-        if(nombre==='' && medida==='' && stock===''){
+        if (nombre === '' && medida === '' && stock === '') {
             this.state.materiales = this.state.filtro;
-        }   
+        }
     }
-}   
+}
 
 Salidas.template = "dtm_almacen.salidas";
 

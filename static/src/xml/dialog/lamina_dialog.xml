@@ -18,6 +18,7 @@
                     <tbody>
                       <t t-foreach="this.state.laminas" t-as="lamina" t-key="lamina.id">
                         <tr>
+                          <td><t t-esc="lamina.orden_trabajo"/></td>                          
                           <td><t t-esc="lamina.lamina"/></td>                          
                           <td class="text-center"><t t-esc="lamina.cantidad"/></td>                          
                           <td>

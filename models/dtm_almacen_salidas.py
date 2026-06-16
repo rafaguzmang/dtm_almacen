@@ -10,4 +10,4 @@ class DTMAlmacenSalidas(models.Model):
     cantidad_salida = fields.Float(string='Cantidad de Salida')
     responsable = fields.Char(string='Responsable que Recibe')
     fecha_salida = fields.Datetime(string='Fecha de Salida')
-    
+    orden_trabajo = fields.Integer(string='Orden de Trabajo')

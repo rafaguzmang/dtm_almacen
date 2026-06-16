@@ -37,6 +37,8 @@
         'dtm_almacen/static/src/js/ordenes_revision.js',
         'dtm_almacen/static/src/js/dialog/lamina_dialog.js',
         'dtm_almacen/static/src/js/dialog/materiales_rev_dialogo.js',
+        'dtm_almacen/static/src/js/ordenes_entrega.js',
+        'dtm_almacen/static/src/js/dialog/meterial_entrega_dialogo.js',
         # XML
         'dtm_almacen/static/src/xml/revision.xml',
         'dtm_almacen/static/src/xml/transito.xml',
@@ -45,6 +47,8 @@
         'dtm_almacen/static/src/xml/ordenes_revision.xml',
         'dtm_almacen/static/src/xml/dialog/lamina_dialog.xml',
         'dtm_almacen/static/src/xml/dialog/materiales_rev_dialogo.xml',
+        'dtm_almacen/static/src/xml/ordenes_entrega.xml',
+        'dtm_almacen/static/src/xml/dialog/meterial_entrega_dialogo.xml',
         ],
     },
 }

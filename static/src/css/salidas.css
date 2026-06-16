@@ -160,6 +160,8 @@
     cursor: pointer;
 }
 
+
+
 .filtro-select:focus {
     outline: none;
     border-color: #667eea;
@@ -186,6 +188,10 @@
 /* === Estilos específicos de columnas === */
 .td-codigo {
     font-weight: 600;
+}
+
+.salida-row:hover {
+    cursor: pointer;
 }
 
 .codigo-badge {

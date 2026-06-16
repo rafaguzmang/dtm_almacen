@@ -196,9 +196,11 @@ class Material(http.Controller):
 
         get_material = request.env['dtm.materials.line'].sudo().search([('model_id.ot_number','=',orden_trabajo),('materials_list','=',codigo)],limit=1)    
         if get_material:
-            get_material.write({'materials_availabe':get_material.materials_availabe + cantidad,
-                                'materials_required':get_material.materials_cuantity - cantidad})
-
+            get_material.write({
+                                    'materials_availabe':get_material.materials_availabe + cantidad,
+                                    'materials_required':max(get_material.materials_cuantity - cantidad, 0),
+                                    'factura':factura
+                                })
         if get_comprado.tipo_orden in ['Requi']:
             get_directo = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)])
             if get_directo:
@@ -404,7 +406,8 @@ class Material(http.Controller):
         result = [
             {
                 'lamina':corte.lamina,
-                'cantidad':corte.cantidad
+                'cantidad':corte.cantidad,
+                'orden_trabajo':corte.orden_trabajo,
             }
             for corte in request.env['dtm.control.laminas'].sudo().search([])
         ]

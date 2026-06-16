@@ -448,7 +448,7 @@
     letter-spacing: 0.07em;
 }
 
-.mr-inv-input {
+.mr-row-ok {
     width: 100%;
     padding: 5px 8px;
     background: var(--bg-input);
@@ -461,6 +461,10 @@
     outline: none;
     transition: border-color 0.2s;
     -moz-appearance: textfield;
+}
+
+.mr-row-entregado {
+    background: #022702;
 }
 
 .mr-inv-input::-webkit-inner-spin-button,

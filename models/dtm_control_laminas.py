@@ -7,3 +7,4 @@ class Control(models.Model):
 
     lamina = fields.Char(string='Nombre')
     cantidad = fields.Integer(string='Cantidad')
+    orden_trabajo = fields.Integer(string='Orden de Trabajo')

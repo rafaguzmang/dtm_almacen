@@ -97,3 +97,88 @@ class Ordenes(http.Controller):
                 get_compras.write(vals) if get_compras else get_compras.create(vals)
             
         return {'ok': '200'}
+
+    @http.route('/almacen_ordenes_entrega', type='http', auth='public')
+    def almacen_ordenes_entrega(self):
+        get_ordenes = request.env['dtm.odt'].sudo().search([])
+        result = []
+        for orden in get_ordenes:
+            result.append({
+                'id': orden.id,
+                'ot': orden.ot_number,
+                'cliente': orden.name_client,
+                'proyecto': orden.product_name,
+                'tipo_orden': orden.tipe_order if orden.tipe_order else '',               
+            })
+        
+        return request.make_response(
+            json.dumps(result),
+            headers={
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        )
+
+    @http.route('/almacen_material_entrega', type='json', auth='public')
+    def almacen_material_entrega(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        orden = data.get('orden')
+        get_materiales = request.env['dtm.odt'].sudo().search([ ('ot_number','=',int(orden))],limit=1).materials_ids
+        result = []
+        for material in get_materiales:
+            result.append({
+                'id': material.id,
+                'codigo': material.materials_list.id,
+                'nombre': f"{material.materials_list.nombre} {material.materials_list.medida}",
+                'cantidad': material.materials_cuantity,
+                'disponible': material.materials_availabe,
+                'requerido': material.materials_required,
+                'entregado': material.entregado,
+                'recibe': material.recibe,
+                'cantidad_entregada':material.cant_entregada,
+                'factura':material.factura,
+            })
+
+        return result
+            
+    @http.route('/almacen_personal_recibe', type='http', auth='public')
+    def almacen_personal_recibe(self):
+        get_personal = request.env['dtm.hr.empleados'].sudo().search([])
+        result = []
+        for personal in get_personal:
+            result.append({
+                'id': personal.id,
+                'nombre': personal.nombre,
+            })
+        return request.make_response(
+            json.dumps({'result': result}),
+            headers={
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            }
+        )
+
+    @http.route('/almacen_actualizar_orden', type='json', auth='public')
+    def almacen_actualizar_orden(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        id = int(data.get('id'))
+        cantidad = int(data.get('cantidad'))
+        persona = data.get('persona')
+        get_material = request.env['dtm.materials.line'].sudo().browse(id)
+        get_material.write({'cant_entregada': get_material.cant_entregada + cantidad,'recibe': persona})
+        if cantidad >= get_material.materials_cuantity:
+            get_material.write({'entregado': True})
+
+        request.env['dtm.almacen.salidas'].sudo().create({
+            'codigo_material':get_material.materials_list.id,
+            'nombre':f"{get_material.materials_list.nombre} {get_material.materials_list.medida}",
+            'tipo':'Indirecto',
+            'responsable':persona,
+            'cantidad_salida':cantidad,
+        })
+
+        return {'cantidad': get_material.cant_entregada,
+                'recibio': get_material.recibe,
+            }
