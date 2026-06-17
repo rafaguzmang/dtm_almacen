@@ -1,0 +1,75 @@
+<templates xml:space="preserve">
+    <t t-name="dtm_almacen.orden_entrega" owl="1">
+        <div class="salidas-container">
+            <!-- Encabezado -->
+            <div class="salidas-header">
+                <h1>Ordenes de Trabajo</h1>
+            </div>
+
+            <!-- Tabla -->
+            <div class="salidas-tabla-wrapper">
+                <table class="salidas-tabla">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Tipo</th>
+                            <th>Cliente</th>
+                            <th>Proyecto</th>                               
+                        </tr>    
+                    </thead>
+                    <tbody>
+                        <!-- Fila de Filtros -->
+                        <tr class="filtros-row">
+                            <td>
+                                <input type="number" name="codigo_filtro" min="0" class="filtro-input" placeholder="Código..." 
+                                    t-on-input="(ev)=> this.codigoFiltro(ev)"/>
+                            </td>
+                            <td>
+                                <select name="tipo_filtro" class="filtro-select" t-on-change="(ev) => this.tipoOrdenFiltro(ev)">
+                                    <option value="">Todo...</option>
+                                    <option value="OT">OT</option>
+                                    <option value="NPI">NPI</option>  
+                                </select>
+                              
+                            </td>
+                            <td>
+                                 <select name="stock_filtro" class="filtro-select" t-on-change="(ev) => this.clienteFiltro(ev)">
+                                    <option value="">Todo...</option>
+                                    <t t-foreach="state.clientes" t-as="cliente" t-key="cliente">
+                                        <option t-att-value="cliente.id"> <t t-esc="cliente"/> </option>
+                                    </t>
+                                </select>
+                            </td>
+                            <td>
+                                 <input type="text" name="nombre_filtro" class="filtro-input" placeholder="Nombre..." 
+                                    t-on-input="(ev) => this.proyectoFiltro(ev)"/>
+                            </td>       
+                        </tr> 
+                        
+                        <!-- Filas de datos -->
+                        <t t-foreach="state.ordenes" t-as="orden" t-key="orden.id">
+                            <tr class="salida-row" t-on-click="(ev)=> this.verMateriales(orden.ot,orden.cliente,orden.proyecto,orden.tipo_orden)" >
+                                <td class="td-codigo" name="codigo_material">
+                                    <span class="codigo-badge"><t t-esc="orden.ot"/></span>
+                                </td>
+                                <td class="td-nombre">
+                                    <t t-esc="orden.tipo_orden"/>
+                                </td>
+                                <td class="td-nombre">
+                                    <t t-esc="orden.cliente"/>
+                                </td>
+                                <td class="td-medida">
+                                    <t t-esc="orden.proyecto"/>
+                                </td>
+                                             
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>              
+            </div>
+            <t t-if="state.entregaMaterialesDialogo">   
+                <EntregasOrdenesDialogo cerrar="this.cerrarDialogo" orden="this.state.ordenMaterial" cliente="this.state.ordenCliente" proyecto="this.state.ordenProyecto" tipo_orden="this.state.ordenTipoOrden"/>  
+            </t>
+        </div>
+    </t>
+</templates>

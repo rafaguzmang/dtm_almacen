@@ -1,0 +1,105 @@
+<templates xml:space="preserve">
+    <t t-name="dtm_almacen.entregas_ordenes_dialogo" owl="1">
+          <div class="mr-modal-backdrop" id="modalBackdrop" >
+            <div class="mr-modal" id="modal" role="dialog" aria-modal="true">
+
+                <!-- HEADER DEL MODAL -->
+               <div class="mr-modal-header">
+                    <div class="mr-modal-header-top" style="width: 33%;">
+                        <div class="mr-modal-order-info">
+                            <span class="mr-modal-ot-label" t-esc="this.props.tipo_orden"></span>
+                            <span class="mr-modal-ot-num" t-esc="this.props.orden"></span>
+                        </div>                       
+                    </div>
+                    <div class="mr-modal-project-info" style="width: 33%;">
+                        <div class="mr-modal-client" t-esc="this.props.cliente"></div>
+                        <div class="mr-modal-project" t-esc="this.props.proyecto"></div>
+                    </div>
+                    <div class="mr-modal-header-close" style="width: 33%;justify-content: flex-end;">
+                         <button class="mr-modal-close" t-on-click="this.props.cerrar" aria-label="Cerrar">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div> 
+
+                <!-- TABLA DE MATERIALES -->
+                <div class="mr-modal-body">
+                    <table class="mr-mat-table">
+                    <thead>
+                        <tr>
+                            <th class="mr-col-id">ID</th>
+                            <th class="mr-col-desc">Descripción</th>
+                            <th class="mr-col-qty">Cant.</th>
+                            <th class="mr-col-inv">Disponible</th>
+                            <th class="mr-col-req">Requerido</th>
+                            <th class="mr-col-req">Entregado</th>
+                            <th class="mr-col-req">Cant.</th>
+                            <th class="mr-col-req">Recibe</th>
+                            <th class="mr-col-req">Factura</th>
+                            <th class="mr-col-action">Listo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="this.state.materiales" t-as="material" t-key="material.id">
+                            <tr class="mr-row-ok" t-att-class="material.entregado ? 'mr-row-entregado' : ''">
+                                <td class="mr-col-id mr-mono" t-esc="material.codigo"/>
+                                <td class="mr-col-desc">
+                                    <span class="mr-mat-name" t-esc="material.nombre"/>
+                                </td>
+                                <td class="mr-col-qty mr-mono" t-esc="material.cantidad"/>
+                                <td class="mr-col-qty mr-mono" t-esc="material.disponible"/>
+                                <td class="mr-col-qty mr-mono" t-esc="material.requerido"/>
+                                <td class="mr-col-qty mr-mono" t-esc="material.cantidad_entregada"/>
+                                <td class="mr-col-inv">
+                                    <input name="cantidad_entregada" type="number" class="mr-inv-input" min="0" />
+                                </td>
+                                <td class="mr-col-req">
+                                    <select name="lista_personal"  class="select-personal">
+                                        <option value="">-----</option>
+                                        <t t-foreach="this.state.personal" t-as="personal" t-key="personal.id">
+                                            <option t-att-value="personal.id"><t t-esc="personal.nombre"/></option>                                        
+                                        </t>
+                                    </select>
+                                </td>
+                                <td class="mr-col-qty mr-mono" t-esc="material.factura"></td>
+                                <td class="mr-col-action">
+                                    <button t-att-class="material.almacen ? 'mr-btn-listo mr-btn-listo--done' :'mr-btn-listo'" title="Marcar listo" t-on-click="(e) => this.entregaMaterial(e,material.id)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><rect x="2" y="9" width="4" height="12" rx="1"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    </table>
+                </div>
+
+                <!-- FOOTER DEL MODAL -->
+                <div class="mr-modal-footer">
+                    <span class="mr-footer-hint">Modifica el campo <strong>Inventario</strong> y presiona el pulgar cuando la fila esté lista.</span>
+                    <div class="mr-footer-actions">
+                        <button class="mr-btn-secondary" t-on-click="this.props.cerrar">Cerrar</button>                       
+                    </div>
+                </div>
+
+                <!-- PANTALLA DE CONFIRMACIÓN -->
+                <t t-if="this.state.openConfirmacion">
+                    <div class="rmc-overlay">
+                        <div class="rmc-dialog">
+                            <div class="rmc-icon-wrap">
+                                <i class="ti ti-circle-check" style="font-size: 28px; color: #1D9E75;" aria-hidden="true"></i>
+                            </div>
+                            <h3>¿Lista completa?</h3>
+                            <p>Todos los materiales han sido revisados.<br>¿Deseas marcar la OT <strong style="color:#fff;">1240</strong> como lista?</p>
+                            <div class="rmc-btn-row">
+                                <button class="rmc-btn-cancel" t-on-click="this.confirmarCierre">Cancelar</button>
+                                <button class="rmc-btn-confirm" t-on-click="() => this.mandarComprar()">Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+               
+            </div>
+        </div>
+
+    </t>
+</templates>
