@@ -100,7 +100,12 @@ class Ordenes(http.Controller):
 
     @http.route('/almacen_ordenes_entrega', type='http', auth='public')
     def almacen_ordenes_entrega(self):
-        get_ordenes = request.env['dtm.odt'].sudo().search([])
+        get_ordenes = request.env['dtm.odt'].sudo().search([
+            ('ot_number', '!=', 0),
+            ('firma', '!=', False),
+            ('firma_ventas', '!=', False),
+            ('firma_ingenieria', '!=', False),
+        ])
         result = []
         for orden in get_ordenes:
             result.append({
