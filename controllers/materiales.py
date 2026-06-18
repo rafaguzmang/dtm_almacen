@@ -198,7 +198,7 @@ class Material(http.Controller):
         if get_material:
             get_material.write({
                                     'materials_availabe':get_material.materials_availabe + cantidad,
-                                    'materials_required':max(get_material.materials_cuantity - cantidad, 0),
+                                    'materials_required':max(get_material.materials_cuantity -(get_material.materials_availabe +cantidad), 0),
                                     'factura':factura
                                 })
         if get_comprado.tipo_orden in ['Requi']:
