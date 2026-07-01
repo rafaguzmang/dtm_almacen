@@ -104,9 +104,9 @@ class Almacen(models.Model):
             vals = {
                 "nombre":self.nombre_materiales.nombre,
                 "medida":self.medidas_back,
-                "cantidad":self.cantidad_nueva,
                 "localizacion":self.localizacion,
             }
+            vals["cantidad"] = get_inventario.cantidad + self.cantidad_nueva if get_inventario else self.cantidad_nueva
             get_inventario.write(vals) if get_inventario else get_inventario.create(vals)
             get_inventario = self.env['dtm.materiales'].search([("nombre","=",self.nombre_materiales.nombre),("medida","=",self.medidas_back)])
             self.codigo_nuevo = get_inventario.id
