@@ -38,7 +38,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="this.state.materiales" t-as="material" t-key="material.codigo">
+                        <t t-foreach="this.state.materiales" t-as="material" t-key="material.id_linea">
                             <tr class="mr-row-ok" data-listo="true">
                                 <td class="mr-col-id mr-mono" t-esc="material.codigo"/>
                                 <td class="mr-col-desc">

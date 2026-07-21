@@ -155,7 +155,8 @@ class Material(http.Controller):
                     'factura':codigo.factura if codigo.factura else '',
                     'notas':codigo.notas_almacen if codigo.notas_almacen else '',
                     'orden_trabajo':codigo.orden_trabajo,  
-                    'proyecto': proyecto if proyecto else 'DTM'
+                    'proyecto': proyecto if proyecto else 'DTM',
+                    'extra_materials':codigo.extra_materials
                 }
                 result.append(vals)
         result = list(result)
@@ -185,16 +186,18 @@ class Material(http.Controller):
         cantidad = int(data.get('cantidad'))
         orden_trabajo = data.get('orden_trabajo')
         factura = data.get('factura')
+        extra_materials = data.get('extra_materials')
         # Se buscan todas las ordenes que se hayan comprado con el mismo proveedor y código
         get_comprado = request.env['dtm.compras.realizado'].sudo().search([
             ('comprado','!=','Recibido'),
             ('codigo','=',int(codigo)),
             ('proveedor','=',proveedor),
             ('orden_trabajo','=',orden_trabajo),
-            ('listo_btn', '=', 'True')
+            ('listo_btn', '=', 'True'),
+            ('extra_materials', '=', extra_materials)
         ],limit=1)    
 
-        get_material = request.env['dtm.materials.line'].sudo().search([('model_id.ot_number','=',orden_trabajo),('materials_list','=',codigo)],limit=1)    
+        get_material = request.env['dtm.materials.line'].sudo().search([('model_id.ot_number','=',orden_trabajo),('materials_list','=',codigo),('extra_materials','=',extra_materials),('materials_required','>',0)],limit=1)    
         if get_material:
             get_material.write({
                                     'materials_availabe':get_material.materials_availabe + cantidad,
@@ -219,6 +222,8 @@ class Material(http.Controller):
             "descripcion":descripcion,
             "fecha_real":datetime.datetime.now(),
             "factura":factura,
+            "precio":get_comprado.unitario,
+            "total":get_comprado.costo,
             "notas":data.get('notas'),
             "orden_trabajo":orden_trabajo
         }

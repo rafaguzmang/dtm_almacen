@@ -36,7 +36,7 @@ export class Transito extends Component {
         const factura = ev.target.closest('tr').querySelector('[name=factura]').value;
         const notas = ev.target.closest('tr').querySelector('[name=notas]').value;
         const orden_trabajo = ev.target.closest('tr').querySelector('[name=orden_compra]').innerText;
-        console.log(codigo, orden_trabajo)
+        const extra_materials = this.state.entradas.find(row => row.codigo === codigo && row.proveedor === proveedor && row.descripcion === descripcion && row.solicitado === solicitado && row.recibido === recibido)?.extra_materials;
         if ((recibido + parseInt(cantidad)) > solicitado) {
             alert("La cantidad ingresada supera la cantidad solicitada")
         }
@@ -58,7 +58,8 @@ export class Transito extends Component {
                             solicitado: solicitado,
                             recibido: recibido,
                             factura: factura,
-                            notas: notas
+                            notas: notas,
+                            extra_materials: extra_materials
                         })
                     })
                 }

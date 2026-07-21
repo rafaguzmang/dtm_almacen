@@ -68,12 +68,12 @@ class Ordenes(http.Controller):
         raw = request.httprequest.data
         data = json.loads(raw)
         materiales = data.get('materiales')
-        materiales_int = [int(m) for m in materiales]
-        get_material = request.env['dtm.materials.line'].sudo().browse(materiales_int)
-        for item in get_material:
-            if item.materials_required > 0:
-                nombre = item.materials_list.nombre
-                medida = item.materials_list.medida
+        materiales_int = [int(m) for m in materiales] # Se convierte a enteros
+        get_material = request.env['dtm.materials.line'].sudo().browse(materiales_int) # Se obtiene los records de dtm.materials.line
+        for item in get_material: # Se itera sobre los records
+            if item.materials_required > 0 and not item.revision: # Se verifica si la cantidad requerida es mayor a 0 y si no se ha revisado por almacén
+                nombre = item.materials_list.nombre # Se obtiene el nombre del material
+                medida = item.materials_list.medida # Se obtiene la medida del material
                 # Descarta maquinados
                 if nombre.startswith("Maquinado") or nombre == "Material Sobrante":
                     continue
@@ -83,7 +83,7 @@ class Ordenes(http.Controller):
                 # Descarta perfilería que no mida 6 metros
                 if any(perfil in nombre for perfil in lista_perfil) and not any(medida in medida for medida in medida_perfiles):
                     continue
-                get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',str(item.model_id.ot_number)),('codigo','=',item.materials_list.id)],limit=1)                
+                get_compras = request.env['dtm.compras.requerido'].sudo().search([('orden_trabajo','=',str(item.model_id.ot_number)),('codigo','=',item.materials_list.id),('extra_materials','=',item.extra_materials)],limit=1)                
                 vals = {
                         'orden_trabajo':str(item.model_id.ot_number),
                         'tipo_orden':item.model_id.tipe_order,
@@ -93,6 +93,7 @@ class Ordenes(http.Controller):
                         'cantidad':item.materials_required,
                         'disenador':item.model_id.disenador,
                         'nesteo':item.model_id.firma_ingenieria,
+                        'extra_materials':True if item.extra_materials else False,
                     }            
                 get_compras.write(vals) if get_compras else get_compras.create(vals)
             
