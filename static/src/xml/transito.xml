@@ -14,6 +14,7 @@
               <th>Cantidad</th>
               <th>Factura</th>
               <th>Notas</th>
+              <th></th>
             </tr>
         </thead>
         <tbody>
@@ -25,9 +26,8 @@
                     <td t-att-style="entrada.duplicado ? 'color:#ff9800' : ''"><t t-esc="entrada.descripcion" /></td>
                     <td name="solicitado"><t t-esc="entrada.solicitado" /></td>
                     <td name="recibido"><t t-esc="entrada.recibido" /></td>
-                    <td style="width:5%"><!-- Cantidad agregada por almacén -->
-                        <input type="number" min = "-1"
-                               t-on-change="(ev)=> this.cantidadIngresada(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.solicitado,entrada.recibido)"/>
+                    <td style="width:5%" ><!-- Cantidad agregada por almacén -->
+                        <input type="number" min = "-1" name="cantidadIngresada"/>
                     </td>
                     <td style="width:8%">                        
                         <input type="text" name="factura" t-att-value="entrada.factura" t-on-change="(ev)=>this.factura(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.orden_compra)"/>
@@ -35,6 +35,11 @@
                     <td>
                         <input type="text" name="notas" t-att-value="entrada.notas" t-on-change="(ev)=>this.notas(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.orden_compra)"/>
                     </td>
+                    <td style="width:5%">
+                        <button title="Marcar listo" class="mr-btn-listo mr-btn-listo--done" t-on-click="(ev)=> this.cantidadIngresada(ev,entrada.proveedor,entrada.codigo,entrada.descripcion,entrada.solicitado,entrada.recibido)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><rect x="2" y="9" width="4" height="12" rx="1"/></svg>
+                        </button>
+                    </td>                    
                 </tr>
             </t>
         </tbody>

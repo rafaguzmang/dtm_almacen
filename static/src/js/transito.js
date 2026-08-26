@@ -32,7 +32,8 @@ export class Transito extends Component {
         this.state.entradas = sortedData.map(row => ({ num: num++, ...row }))
     }
     async cantidadIngresada(ev, proveedor, codigo, descripcion, solicitado, recibido) {
-        const cantidad = ev.target.value;
+        const cantidad_input = ev.target.closest('tr').querySelector('[name=cantidadIngresada]');
+        const cantidad = cantidad_input.value;
         const factura = ev.target.closest('tr').querySelector('[name=factura]').value;
         const notas = ev.target.closest('tr').querySelector('[name=notas]').value;
         const orden_trabajo = ev.target.closest('tr').querySelector('[name=orden_compra]').innerText;
@@ -72,6 +73,7 @@ export class Transito extends Component {
                 console.log(error)
             }
         }
+        cantidad_input.value = 0;
 
     }
     async factura(ev, proveedor, codigo, descripcion, orden_compra) {

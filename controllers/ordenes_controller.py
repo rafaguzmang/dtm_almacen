@@ -174,7 +174,7 @@ class Ordenes(http.Controller):
         persona = data.get('persona')
         get_material = request.env['dtm.materials.line'].sudo().browse(id)
         get_material.write({'cant_entregada': get_material.cant_entregada + cantidad,'recibe': persona})
-        if cantidad >= get_material.materials_cuantity:
+        if get_material.cant_entregada >= get_material.materials_cuantity:
             get_material.write({'entregado': True})
 
         request.env['dtm.almacen.salidas'].sudo().create({

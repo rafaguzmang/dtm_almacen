@@ -34,6 +34,6 @@
         <field name="name">Ordenes Entrega</field>
         <field name="tag">dtm_almacen.orden_entrega</field>
     </record>
-    <menuitem id="dtm_almacen_ordenes_entrega_menu" action="dtm_almacen_ordenes_entrega_action"/>
+    <!-- <menuitem id="dtm_almacen_ordenes_entrega_menu" action="dtm_almacen_ordenes_entrega_action"/> -->
 
 </odoo>

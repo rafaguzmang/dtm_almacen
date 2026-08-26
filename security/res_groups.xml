@@ -13,4 +13,9 @@
         <field name="name">Almacen Usuario</field>
         <field name="category_id" ref="module_category_dtm_almacen"/>
     </record>
+
+    <record id="group_dtm_almacen_restriccion" model="res.groups">
+        <field name="name">Almacen Restriccion</field>
+        <field name="category_id" ref="module_category_dtm_almacen"/>
+    </record>
 </odoo>
