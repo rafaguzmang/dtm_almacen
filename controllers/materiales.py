@@ -195,15 +195,42 @@ class Material(http.Controller):
             ('orden_trabajo','=',orden_trabajo),
             ('listo_btn', '=', 'True'),
             ('extra_materials', '=', extra_materials)
-        ],limit=1)    
+        ],limit=1)   
+        if not get_comprado:
+        # nada pendiente por recibir para este código/OT — decidir qué hacer
+            return {'error': f'No hay línea de material pendiente para código {codigo} en OT {orden_trabajo}'}
+ 
+        if get_comprado.tipo_orden in ['OT', 'NPI']:
+            get_material = request.env['dtm.materials.line'].sudo().search([
+                ('model_id.ot_number', '=', orden_trabajo),
+                ('materials_list', '=', codigo),
+                ('extra_materials', '=', extra_materials),
+                ('materials_required', '>', 0)
+            ], limit=1)
 
-        get_material = request.env['dtm.materials.line'].sudo().search([('model_id.ot_number','=',orden_trabajo),('materials_list','=',codigo),('extra_materials','=',extra_materials),('materials_required','>',0)],limit=1)    
-        if get_material:
-            get_material.write({
-                                    'materials_availabe':get_material.materials_availabe + cantidad,
-                                    'materials_required':max(get_material.materials_cuantity -(get_material.materials_availabe +cantidad), 0),
-                                    'factura':factura
-                                })
+            if not get_material:
+                # La línea ya no existe (el ingeniero la borró) pero el material físico llegó igual
+                get_stock = request.env['dtm.materiales'].sudo().search([('id', '=', codigo)], limit=1)
+                if get_stock:
+                    get_stock.write({'cantidad': get_stock.cantidad + cantidad})
+            else:
+                total_disponible = get_material.materials_availabe + cantidad
+                if total_disponible >= get_material.materials_cuantity:
+                    sobrante = total_disponible - get_material.materials_cuantity
+                    get_material.write({
+                        'materials_availabe': get_material.materials_cuantity,
+                        'materials_required': 0,
+                        'factura': factura
+                    })
+                    get_stock = request.env['dtm.materiales'].sudo().search([('id', '=', codigo)], limit=1)
+                    if get_stock:
+                        get_stock.write({'cantidad': get_stock.cantidad + sobrante})
+                else:
+                    get_material.write({
+                        'materials_availabe': total_disponible,
+                        'materials_required': get_material.materials_cuantity - total_disponible,
+                        'factura': factura
+                    })
         if get_comprado.tipo_orden in ['Requi']:
             get_directo = request.env['dtm.consumibles'].sudo().search([('id','=',codigo)])
             if get_directo:

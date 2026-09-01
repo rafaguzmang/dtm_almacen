@@ -18,7 +18,7 @@
                             <th>Nombre</th>
                             <th>Medida</th>
                             <th>Stock</th>
-                            <th>Solicitado</th>
+                            <!-- <th>Solicitado</th> -->
                             <th>Salida</th>
                             <th>Responsable</th>
                             <th>Localización</th>
@@ -46,7 +46,7 @@
                                     <option value="sin_stock">Sin stock</option>  
                                 </select>
                             </td>
-                            <td></td>
+                            <!-- <td></td> -->
                             <td></td>
                             <td></td>
                             <td>
@@ -69,11 +69,11 @@
                                 <td class="td-stock">
                                     <input type="number" min="0" class="input-stock" t-att-value="material.cantidad" t-on-change="(ev) => this.actualizarStock(ev)"/>
                                 </td>
-                                <td class="td-solicitado">
+                                <!-- <td class="td-solicitado">
                                     <span class="solicitado-badge">
                                         <t t-esc="material.apartado"/>
                                     </span>
-                                </td>
+                                </td> -->
                                 <td class="td-salida">
                                     <input type="number" min="0" class="input-numero" value="0" placeholder="0" t-on-change='(ev)=>this.cantidadSalida(ev)'/>
                                 </td>
