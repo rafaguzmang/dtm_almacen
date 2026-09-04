@@ -21,7 +21,7 @@
                         <!-- Fila de Filtros -->
                         <tr class="filtros-row">
                             <td>
-                                <input type="number" name="codigo_filtro" min="0" class="filtro-input" placeholder="Código..." 
+                                <input type="number" name="codigo_filtro" min="0" class="filtro-input" placeholder="NºOT/NPI" 
                                     t-on-input="(ev)=> this.codigoFiltro(ev)"/>
                             </td>
                             <td>
@@ -44,6 +44,21 @@
                                  <input type="text" name="nombre_filtro" class="filtro-input" placeholder="Nombre..." 
                                     t-on-input="(ev) => this.proyectoFiltro(ev)"/>
                             </td>       
+                        </tr> 
+                        <tr class="filtros-row">
+                            <td>
+                                <input type="number" name="codigo_filtro" min="0" class="filtro-input" placeholder="Código Material" 
+                                    t-on-input="(ev)=> this.codigoMaterialFiltro(ev)"/>
+                            </td>
+                            <td>
+                                <input type="text" name="codigo_filtro" min="0" class="filtro-input" placeholder="Nombre Material..." 
+                                    t-on-input="(ev)=> this.nombreMaterialFiltro(ev)"/>                              
+                            </td>
+                            <td>
+                                <input type="text" name="codigo_filtro" min="0" class="filtro-input" placeholder="Medida Material..." 
+                                    t-on-input="(ev)=> this.medidaMaterialFiltro(ev)"/>                              
+                            </td>
+                            <td></td> 
                         </tr> 
                         
                         <!-- Filas de datos -->

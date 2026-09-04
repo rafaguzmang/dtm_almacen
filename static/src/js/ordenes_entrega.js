@@ -21,11 +21,99 @@ export class OrdenesEntrega extends Component {
             ordenCliente: "",
             ordenProyecto: "",
             ordenTipoOrden: "",
+            nombreMaterial: "",
+            medidaMaterial: "",
         });
 
         onMounted(async () => {
             await this.ordenes();
         })
+    }
+
+    async codigoMaterialFiltro(ev) {
+        const codigo = ev.target.value;
+        const fila = ev.target.closest('tr');
+
+        // Limpia nombre y medida (input visual + estado)
+        fila.children[1].children[0].value = "";
+        fila.children[2].children[0].value = "";
+        this.state.nombreMaterial = "";
+        this.state.medidaMaterial = "";
+
+        if (codigo === "") {
+            this.state.ordenes = this.state.ordenes_main;
+            return;
+        }
+
+        try {
+            const response = await fetch('/almacen_codigo_material_filtro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo })
+            });
+            const data = await response.json();
+            const resultado = data.result;
+
+            const ordenesFiltradas = this.state.ordenes_main.filter(o =>
+                resultado.some(item => String(item.orden) === String(o.ot))
+            );
+
+            this.state.ordenes = ordenesFiltradas.map(o => {
+                const info = resultado.find(item => String(item.orden) === String(o.ot));
+                return { ...o, completo: info.completo, entregado: info.entregado };
+            });
+        } catch (error) {
+            console.error("Error en codigoMaterialFiltro:", error);
+        }
+    }
+
+    async nombreMaterialFiltro(ev) {
+        this._limpiarCodigoMaterial(ev);
+        this.state.nombreMaterial = ev.target.value;
+        await this._filtrarPorNombreYMedida();
+    }
+
+    async medidaMaterialFiltro(ev) {
+        this._limpiarCodigoMaterial(ev);
+        this.state.medidaMaterial = ev.target.value;
+        await this._filtrarPorNombreYMedida();
+    }
+
+    _limpiarCodigoMaterial(ev) {
+        const fila = ev.target.closest('tr');
+        const codigoInput = fila.children[0].children[0];
+        codigoInput.value = "";
+    }
+
+    async _filtrarPorNombreYMedida() {
+        const nombre = this.state.nombreMaterial;
+        const medida = this.state.medidaMaterial;
+
+        if (nombre === "" && medida === "") {
+            this.state.ordenes = this.state.ordenes_main;
+            return;
+        }
+
+        try {
+            const response = await fetch('/almacen_nombre_material_filtro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, medida })
+            });
+            const data = await response.json();
+            const resultado = data.result;
+
+            const ordenesFiltradas = this.state.ordenes_main.filter(o =>
+                resultado.some(item => String(item.orden) === String(o.ot))
+            );
+
+            this.state.ordenes = ordenesFiltradas.map(o => {
+                const info = resultado.find(item => String(item.orden) === String(o.ot));
+                return { ...o, completo: info.completo, entregado: info.entregado };
+            });
+        } catch (error) {
+            console.error("Error en _filtrarPorNombreYMedida:", error);
+        }
     }
 
     verMateriales = (orden, cliente, proyecto, tipo_orden) => {

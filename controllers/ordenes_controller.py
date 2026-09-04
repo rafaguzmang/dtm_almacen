@@ -1,6 +1,8 @@
 from odoo import http
 from odoo.http import request
 import json
+import unicodedata
+
 
 class Ordenes(http.Controller):
 
@@ -188,3 +190,42 @@ class Ordenes(http.Controller):
         return {'cantidad': get_material.cant_entregada,
                 'recibio': get_material.recibe,
             }
+
+    @http.route('/almacen_codigo_material_filtro', type='json', auth='public')
+    def almacen_codigo_material_filtro(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        codigo = data.get('codigo')
+        get_material = request.env['dtm.materials.line'].sudo().search([('materials_list.id','=',int(codigo))])
+        result = []
+        for material in get_material:
+            result.append({
+                'orden': material.model_id.ot_number,
+                'completo': True if material.materials_cuantity == material.materials_availabe else False,
+                'entregado': True if material.materials_cuantity == material.entregado else False,                
+            })
+        return result
+
+
+
+    @http.route('/almacen_nombre_material_filtro', type='json', auth='public')
+    def almacen_nombre_material_filtro(self):
+        raw = request.httprequest.data
+        data = json.loads(raw)
+        nombre = unicodedata.normalize('NFD', data.get('nombre')).encode('ascii', 'ignore').decode('utf-8').lower()
+        medida = unicodedata.normalize('NFD', data.get('medida')).encode('ascii', 'ignore').decode('utf-8').lower()
+
+        todas_las_lineas = request.env['dtm.materials.line'].sudo().search([])
+        get_material = todas_las_lineas.filtered(
+            lambda l: nombre in unicodedata.normalize('NFD', l.materials_list.nombre).encode('ascii', 'ignore').decode('utf-8').lower()
+            and medida in unicodedata.normalize('NFD', l.materials_list.medida).encode('ascii', 'ignore').decode('utf-8').lower()
+        )
+
+        result = []
+        for material in get_material:
+            result.append({
+                'orden': material.model_id.ot_number,
+                'completo': True if material.materials_cuantity == material.materials_availabe else False,
+                'entregado': True if material.materials_cuantity == material.entregado else False,
+            })
+        return result
