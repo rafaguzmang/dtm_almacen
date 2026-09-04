@@ -63,7 +63,9 @@
                         
                         <!-- Filas de datos -->
                         <t t-foreach="state.ordenes" t-as="orden" t-key="orden.id">
-                            <tr class="salida-row" t-on-click="(ev)=> this.verMateriales(orden.ot,orden.cliente,orden.proyecto,orden.tipo_orden)" >
+                            <tr class="salida-row"
+                                t-attf-class="{{orden.entregado ? 'fila-entregado' : (orden.completo ? 'fila-completo' : '')}}"
+                                t-on-click="(ev)=> this.verMateriales(orden.ot,orden.cliente,orden.proyecto,orden.tipo_orden)">
                                 <td class="td-codigo" name="codigo_material">
                                     <span class="codigo-badge"><t t-esc="orden.ot"/></span>
                                 </td>
@@ -76,7 +78,6 @@
                                 <td class="td-medida">
                                     <t t-esc="orden.proyecto"/>
                                 </td>
-                                             
                             </tr>
                         </t>
                     </tbody>
