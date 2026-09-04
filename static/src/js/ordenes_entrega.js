@@ -62,6 +62,7 @@ export class OrdenesEntrega extends Component {
                 const info = resultado.find(item => String(item.orden) === String(o.ot));
                 return { ...o, completo: info.completo, entregado: info.entregado };
             });
+            console.log(this.state.ordenes);
         } catch (error) {
             console.error("Error en codigoMaterialFiltro:", error);
         }

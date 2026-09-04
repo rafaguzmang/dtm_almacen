@@ -202,7 +202,7 @@ class Ordenes(http.Controller):
             result.append({
                 'orden': material.model_id.ot_number,
                 'completo': True if material.materials_cuantity == material.materials_availabe else False,
-                'entregado': True if material.materials_cuantity == material.entregado else False,                
+                'entregado': material.entregado,                
             })
         return result
 
